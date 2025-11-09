@@ -381,32 +381,39 @@ CMD ["node", "server.js"]
 - Cache hit rate
 - Memory/CPU usage
 
-## 🌐 Infraestrutura Cloud
+## 🌐 Infraestrutura Cloud (Futuro)
 
-### Opção 1: AWS
-- EC2 / ECS / EKS (compute)
-- RDS (PostgreSQL)
-- ElastiCache (Redis)
-- S3 (storage)
-- CloudFront (CDN)
+> **MVP:** Inicialmente, pode ser usado um VPS simples. Cloud complexa será implementada em versões futuras.
+
+### Opção 1: AWS (Futuro)
+- EC2 / Lightsail (compute)
+- RDS MySQL (database)
+- ElastiCache (Redis - opcional)
+- S3 (storage - futuro)
+- CloudFront (CDN - futuro)
 - Route53 (DNS)
-- WAF (firewall)
 
-### Opção 2: Google Cloud
-- GKE (Kubernetes)
-- Cloud SQL
+### Opção 2: Google Cloud (Futuro)
+- Compute Engine / GKE
+- Cloud SQL MySQL
 - Memorystore
 - Cloud Storage
 - Cloud CDN
-- Cloud DNS
 
-### Opção 3: Azure
-- AKS (Kubernetes)
-- Azure Database
+### Opção 3: Azure (Futuro)
+- Virtual Machines / AKS
+- Azure Database for MySQL
 - Azure Cache
 - Blob Storage
 - Azure CDN
-- Azure DNS
+
+### MVP: VPS Simples
+Para o MVP, pode-se usar um VPS simples (DigitalOcean, Vultr, Linode) com:
+- Ubuntu Server 22.04
+- MySQL 8.0
+- Node.js 18
+- Nginx como reverse proxy
+- PM2 para gerenciamento de processos
 
 ## 📱 APIs e Integrações
 
