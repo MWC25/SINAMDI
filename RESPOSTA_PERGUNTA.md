@@ -4,6 +4,8 @@
 
 "A proposta original desse projeto é [...] o que esse projeto já cumpriu?"
 
+> **⚠️ IMPORTANTE:** Este projeto será desenvolvido como **MVP (Minimum Viable Product)** com escopo reduzido e tecnologias simplificadas (incluindo MySQL como banco de dados) para viabilizar uma implementação inicial rápida.
+
 ## 📊 Resposta Direta
 
 **O projeto SINAMDI cumpriu aproximadamente 3% da proposta original.**
@@ -18,9 +20,9 @@ Até o momento, o projeto implementou apenas:
    - ✅ Estrutura inicial para organização do código
 
 2. **Documentação de Planejamento** (criada agora)
-   - ✅ README.md com visão geral do projeto
-   - ✅ ROADMAP.md com plano de desenvolvimento detalhado
-   - ✅ ARCHITECTURE.md com arquitetura técnica proposta
+   - ✅ README.md com visão geral do projeto MVP
+   - ✅ ROADMAP.md com plano de desenvolvimento MVP
+   - ✅ ARCHITECTURE.md com arquitetura técnica MVP (MySQL, monolito modular)
    - ✅ FEATURES_STATUS.md com status de cada funcionalidade
    - ✅ GETTING_STARTED.md com guia para desenvolvedores
 

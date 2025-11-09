@@ -1,54 +1,50 @@
-# Arquitetura Proposta - SINAMDI
+# Arquitetura Proposta - SINAMDI (MVP)
 
 ## 📐 Visão Geral da Arquitetura
 
-O SINAMDI seguirá uma arquitetura moderna de três camadas com microserviços, garantindo escalabilidade, manutenibilidade e segurança.
+O SINAMDI seguirá uma arquitetura simplificada de três camadas para o MVP, priorizando funcionalidade sobre complexidade. A arquitetura poderá evoluir para microserviços em versões futuras.
+
+> **⚠️ MVP:** Esta arquitetura representa uma versão inicial simplificada. Tecnologias e padrões foram escolhidos para acelerar o desenvolvimento, com MySQL como banco de dados principal e arquitetura monolítica modular.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                         CAMADA DE APRESENTAÇÃO                    │
 ├─────────────────────────────────────────────────────────────────┤
 │  Portal Público    │  Portal Institucional  │  Portal Vítimas   │
-│  (Next.js/React)   │     (React/Admin)      │  (React/PWA)      │
+│     (React)        │        (React)         │     (React)       │
 └────────────┬───────────────────┬──────────────────┬─────────────┘
              │                   │                  │
              └───────────────────┼──────────────────┘
                                  │
                           [API Gateway]
-                          [Load Balancer]
                                  │
 ┌────────────────────────────────┴─────────────────────────────────┐
-│                        CAMADA DE APLICAÇÃO                        │
+│                   CAMADA DE APLICAÇÃO (MVP)                       │
 ├──────────────────────────────────────────────────────────────────┤
 │                                                                   │
-│  ┌──────────────┐  ┌──────────────┐  ┌────────────────┐        │
-│  │   Auth API   │  │   Data API   │  │  Analytics API │        │
-│  │  (Node.js)   │  │  (Node.js)   │  │   (Python)     │        │
-│  └──────────────┘  └──────────────┘  └────────────────┘        │
-│                                                                   │
-│  ┌──────────────┐  ┌──────────────┐  ┌────────────────┐        │
-│  │ Reports API  │  │  Portal API  │  │  Notif. API    │        │
-│  │  (Node.js)   │  │  (Node.js)   │  │   (Node.js)    │        │
-│  └──────────────┘  └──────────────┘  └────────────────┘        │
+│            ┌─────────────────────────────────┐                   │
+│            │   Backend Monolítico Modular    │                   │
+│            │         (Node.js/Express)       │                   │
+│            │                                 │                   │
+│            │  • Auth Module                  │                   │
+│            │  • Data Collection Module       │                   │
+│            │  • Analytics Module             │                   │
+│            │  • Reports Module               │                   │
+│            │  • Portal Module                │                   │
+│            └─────────────────────────────────┘                   │
 │                                                                   │
 └────────────────────────────┬─────────────────────────────────────┘
                              │
-                    [Message Queue]
-                      [Redis Cache]
+                      [Cache Opcional]
                              │
 ┌────────────────────────────┴─────────────────────────────────────┐
-│                        CAMADA DE DADOS                            │
+│                        CAMADA DE DADOS (MVP)                      │
 ├──────────────────────────────────────────────────────────────────┤
 │                                                                   │
 │  ┌────────────┐  ┌──────────────┐  ┌────────────┐              │
-│  │ PostgreSQL │  │    Redis     │  │  MongoDB   │              │
-│  │  (Principal)│  │   (Cache)    │  │  (Logs)    │              │
+│  │   MySQL    │  │    Redis     │  │   Local    │              │
+│  │ (Principal)│  │  (Opcional)  │  │  Storage   │              │
 │  └────────────┘  └──────────────┘  └────────────┘              │
-│                                                                   │
-│  ┌────────────┐  ┌──────────────┐                               │
-│  │ S3/Storage │  │  TimeSeries  │                               │
-│  │  (Arquivos)│  │  (Métricas)  │                               │
-│  └────────────┘  └──────────────┘                               │
 │                                                                   │
 └──────────────────────────────────────────────────────────────────┘
 ```
@@ -57,71 +53,70 @@ O SINAMDI seguirá uma arquitetura moderna de três camadas com microserviços, 
 
 ### 1. Frontend (Camada de Apresentação)
 
+> **MVP:** Portais serão desenvolvidos com React puro, sem SSR inicialmente. PWA será implementado em versão futura.
+
 #### 1.1 Portal Público
-**Tecnologia:** Next.js (React) + TypeScript
+**Tecnologia:** React + JavaScript/TypeScript
 **Responsabilidades:**
 - Exibição de estatísticas públicas
-- Materiais educativos
-- Blog de conscientização
-- Campanhas de divulgação
-- SEO otimizado
+- Materiais educativos básicos
+- Informações sobre o programa
+- Acesso sem login
 
-**Características:**
-- SSR (Server-Side Rendering)
+**Características (MVP):**
+- SPA (Single Page Application)
 - Sem necessidade de autenticação
-- PWA para acesso offline
-- Alta performance (Lighthouse >90)
+- Design responsivo básico
+- SEO básico com meta tags
 
 #### 1.2 Portal Institucional
-**Tecnologia:** React + TypeScript + Ant Design
+**Tecnologia:** React + Material-UI ou Ant Design
 **Responsabilidades:**
 - Login e gestão de instituições
-- Cadastro e acompanhamento de casos
-- Geração de relatórios
-- Dashboard administrativo
-- Exportação de dados
+- Cadastro de casos
+- Visualização de estatísticas básicas
+- Exportação simples (CSV)
 
-**Características:**
+**Características (MVP):**
 - SPA (Single Page Application)
-- Autenticação obrigatória
-- RBAC (Role-Based Access Control)
-- Interface rica e responsiva
+- Autenticação JWT
+- Permissões básicas por tipo de usuário
+- Interface responsiva
 
 #### 1.3 Portal para Vítimas
-**Tecnologia:** React + TypeScript + Material-UI
+**Tecnologia:** React + Material-UI
 **Responsabilidades:**
 - Formulários de autoavaliação
 - Consentimento informado
-- Acompanhamento anônimo
 - Recursos de apoio
 
-**Características:**
-- PWA instalável
-- Máxima privacidade
+**Características (MVP):**
 - Interface simples e acolhedora
-- Acessibilidade prioritária
+- Máxima privacidade
+- Formulários progressivos
+- Design mobile-first
 
 ### 2. Backend (Camada de Aplicação)
 
-#### 2.1 Authentication Service
+> **MVP:** Backend será um monólito modular em Node.js, permitindo desenvolvimento mais rápido. Pode ser dividido em microserviços posteriormente.
+
+#### 2.1 Authentication Module
 **Tecnologia:** Node.js + Express + JWT
 **Responsabilidades:**
 - Autenticação de usuários
-- Gerenciamento de sessões
-- OAuth2 / OpenID Connect
-- Controle de acesso (RBAC)
+- Gerenciamento de sessões via JWT
+- Controle de acesso básico
 
 **Endpoints principais:**
 ```
 POST   /api/auth/login
 POST   /api/auth/logout
-POST   /api/auth/refresh
 POST   /api/auth/register
 GET    /api/auth/me
 ```
 
-#### 2.2 Data Collection Service
-**Tecnologia:** Node.js + Express + Prisma
+#### 2.2 Data Collection Module
+**Tecnologia:** Node.js + Express + Sequelize/TypeORM
 **Responsabilidades:**
 - Recebimento de autoavaliações
 - Cadastro de casos institucionais
@@ -138,158 +133,131 @@ PUT    /api/data/cases/:id
 DELETE /api/data/cases/:id
 ```
 
-#### 2.3 Analytics Service
-**Tecnologia:** Python + FastAPI + Pandas
+#### 2.3 Analytics Module
+**Tecnologia:** Node.js + Express (MVP - simplificado)
 **Responsabilidades:**
-- Processamento de dados
-- Cálculo de estatísticas
-- Agregações regionais
-- Índices de risco
-- Métricas de recuperação
+- Cálculo de estatísticas básicas
+- Agregações regionais simples
+- Contadores e métricas essenciais
 
 **Endpoints principais:**
 ```
-GET    /api/analytics/regional
-GET    /api/analytics/age-groups
-GET    /api/analytics/risk-levels
-GET    /api/analytics/recovery-rates
-GET    /api/analytics/trends
+GET    /api/analytics/summary
+GET    /api/analytics/by-region
+GET    /api/analytics/by-age-group
 ```
 
-#### 2.4 Reports Service
+#### 2.4 Reports Module
 **Tecnologia:** Node.js + Express
 **Responsabilidades:**
-- Geração de relatórios
-- Exportação (PDF, Excel, CSV)
-- Agendamento de relatórios
-- Templates personalizados
+- Geração de relatórios básicos
+- Exportação CSV
+- Relatórios pré-definidos
 
 **Endpoints principais:**
 ```
-POST   /api/reports/generate
-GET    /api/reports/:id
-GET    /api/reports/scheduled
+GET    /api/reports/summary
 POST   /api/reports/export
 ```
 
-#### 2.5 Portal Service
+#### 2.5 Portal Module
 **Tecnologia:** Node.js + Express
 **Responsabilidades:**
 - Conteúdo educativo
-- Gerenciamento de campanhas
-- Notícias e blog
 - FAQ
+- Informações públicas
 
-**Endpoints principais:**
-```
-GET    /api/portal/content
-GET    /api/portal/campaigns
 GET    /api/portal/resources
-GET    /api/portal/blog
+GET    /api/portal/faq
 ```
-
-#### 2.6 Notification Service
-**Tecnologia:** Node.js + Bull Queue
-**Responsabilidades:**
-- Envio de emails
-- Notificações push
-- SMS (opcional)
-- Alertas de sistema
 
 ### 3. Banco de Dados (Camada de Dados)
 
-#### 3.1 PostgreSQL (Banco Principal)
+> **MVP:** Utilizaremos MySQL como banco de dados principal, com estrutura simplificada.
+
+#### 3.1 MySQL (Banco Principal)
+**Versão:** MySQL 8.0+
+
 **Esquemas principais:**
 
 ```sql
 -- Usuários e Autenticação
 users
-  - id (UUID)
-  - email
-  - password_hash
-  - role (admin, institution, public)
-  - created_at
-  - updated_at
+  - id (INT AUTO_INCREMENT)
+  - email (VARCHAR(255))
+  - password_hash (VARCHAR(255))
+  - role (ENUM: admin, institution, public)
+  - created_at (TIMESTAMP)
+  - updated_at (TIMESTAMP)
 
 -- Instituições
 institutions
-  - id (UUID)
-  - name
-  - cnpj
-  - type
-  - address
-  - contact
-  - user_id (FK)
-  - created_at
+  - id (INT AUTO_INCREMENT)
+  - name (VARCHAR(255))
+  - cnpj (VARCHAR(18))
+  - type (VARCHAR(100))
+  - address (TEXT)
+  - contact (VARCHAR(255))
+  - user_id (INT, FK)
+  - created_at (TIMESTAMP)
 
 -- Casos Institucionais
 institutional_cases
-  - id (UUID)
-  - institution_id (FK)
-  - anonymous_id (hash)
-  - age_group
-  - gender
-  - region
-  - severity_level
-  - status
-  - created_at
-  - updated_at
+  - id (INT AUTO_INCREMENT)
+  - institution_id (INT, FK)
+  - anonymous_id (VARCHAR(64) - hash)
+  - age_group (VARCHAR(50))
+  - gender (VARCHAR(20))
+  - region (VARCHAR(100))
+  - severity_level (INT)
+  - status (VARCHAR(50))
+  - created_at (TIMESTAMP)
+  - updated_at (TIMESTAMP)
 
 -- Autoavaliações
 self_assessments
-  - id (UUID)
-  - anonymous_id (hash)
-  - age_group
-  - gender
-  - region
-  - responses (JSONB)
-  - risk_score
-  - created_at
+  - id (INT AUTO_INCREMENT)
+  - anonymous_id (VARCHAR(64) - hash)
+  - age_group (VARCHAR(50))
+  - gender (VARCHAR(20))
+  - region (VARCHAR(100))
+  - responses (JSON)
+  - risk_score (INT)
+  - created_at (TIMESTAMP)
 
--- Estatísticas Agregadas
+-- Estatísticas Agregadas (para cache de consultas)
 regional_stats
-  - id (UUID)
-  - region
-  - state
-  - city
-  - total_cases
-  - risk_distribution
-  - recovery_rate
-  - period_start
-  - period_end
-  - updated_at
+  - id (INT AUTO_INCREMENT)
+  - region (VARCHAR(100))
+  - state (VARCHAR(50))
+  - city (VARCHAR(100))
+  - total_cases (INT)
+  - period_start (DATE)
+  - period_end (DATE)
+  - updated_at (TIMESTAMP)
 ```
 
-#### 3.2 Redis (Cache e Sessões)
-**Uso:**
-- Cache de estatísticas
-- Sessões de usuário
+#### 3.2 Redis (Cache - Opcional no MVP)
+**Uso (se implementado):**
+- Cache de estatísticas calculadas
 - Rate limiting
-- Filas de processamento
+- Sessões temporárias
 
-#### 3.3 MongoDB (Logs e Auditoria)
-**Coleções:**
-- audit_logs
-- application_logs
-- user_activities
-
-#### 3.4 S3-Compatible Storage
+#### 3.3 Local Storage (Arquivos - MVP)
 **Uso:**
-- Uploads de arquivos
-- Relatórios gerados
-- Materiais educativos
-- Backups
+- Materiais educativos (PDFs, imagens)
+- Arquivos estáticos
+- Uploads temporários
+
+> **Nota MVP:** MongoDB e S3 não serão usados inicialmente. Logs serão armazenados em arquivo ou tabela MySQL. Storage de arquivos será local ou diretório compartilhado.
 
 ## 🔒 Segurança
 
-### Camadas de Segurança
+> **MVP:** Foco em segurança essencial. Recursos avançados serão implementados em versões futuras.
 
-1. **Network Layer**
-   - Firewall
-   - DDoS protection
-   - Rate limiting
+### Camadas de Segurança (MVP)
 
-2. **Application Layer**
+1. **Application Layer**
    - Input validation
    - SQL injection prevention
    - XSS protection

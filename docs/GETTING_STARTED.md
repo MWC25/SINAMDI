@@ -1,4 +1,4 @@
-# Guia de Início Rápido - SINAMDI
+# Guia de Início Rápido - SINAMDI (MVP)
 
 ## 🚀 Como Começar a Desenvolver
 
@@ -12,69 +12,71 @@ Este guia ajudará desenvolvedores a iniciarem o desenvolvimento do SINAMDI.
 
 **NÃO existe código funcional ainda.** Este guia serve para orientar o desenvolvimento futuro.
 
+> **MVP:** Este projeto será desenvolvido como MVP com escopo reduzido e tecnologias simplificadas.
+
 ---
 
 ## 📋 Pré-requisitos
 
 Antes de começar, você precisará ter instalado:
 
-### Ferramentas Essenciais
+### Ferramentas Essenciais (MVP)
 - **Git** (>= 2.30)
 - **Node.js** (>= 18.x) e **npm** (>= 9.x)
-- **Python** (>= 3.10) - para serviços de analytics
-- **Docker** (>= 20.x) e **Docker Compose** (>= 2.x)
-- **PostgreSQL** (>= 14.x) - ou via Docker
-- **Redis** (>= 7.x) - ou via Docker
+- **MySQL** (>= 8.0) - ou via Docker
+- **Docker** (>= 20.x) - opcional
+- **Redis** (opcional para cache)
 
 ### IDEs Recomendados
 - **Visual Studio Code** com extensões:
   - ESLint
   - Prettier
-  - Docker
+  - MySQL (para gerenciar o banco)
   - GitLens
   - REST Client
 - **JetBrains WebStorm** (alternativa)
-- **PyCharm** (para código Python)
 
 ### Conhecimentos Recomendados
-- JavaScript/TypeScript
+- JavaScript/TypeScript básico
 - React.js
 - Node.js e Express
-- SQL e bancos relacionais
+- **MySQL** e SQL básico
 - API REST
 - Git e GitHub
-- Docker básico
 
 ---
 
-## 🏗️ Estrutura do Projeto (Futura)
+## 🏗️ Estrutura do Projeto (MVP)
 
 ```
 SINAMDI/
 ├── back-end/
-│   ├── auth-service/         # Serviço de autenticação
-│   ├── data-service/         # Serviço de coleta de dados
-│   ├── analytics-service/    # Serviço de análise (Python)
-│   ├── reports-service/      # Serviço de relatórios
-│   ├── portal-service/       # Serviço do portal público
-│   ├── notification-service/ # Serviço de notificações
-│   ├── shared/               # Código compartilhado
-│   └── docker-compose.yml    # Orquestração local
+│   ├── src/
+│   │   ├── modules/
+│   │   │   ├── auth/           # Módulo de autenticação
+│   │   │   ├── data/           # Módulo de coleta de dados
+│   │   │   ├── analytics/      # Módulo de análise
+│   │   │   ├── reports/        # Módulo de relatórios
+│   │   │   └── portal/         # Módulo do portal
+│   │   ├── config/             # Configurações
+│   │   ├── middleware/         # Middlewares
+│   │   └── utils/              # Utilitários
+│   ├── migrations/             # Migrações do banco
+│   ├── package.json
+│   └── .env.example
 │
 ├── front-end/
-│   ├── public-portal/        # Portal público (Next.js)
-│   ├── institutional-panel/  # Painel institucional (React)
-│   ├── victim-portal/        # Portal para vítimas (React PWA)
-│   ├── admin-panel/          # Painel administrativo
-│   └── shared/               # Componentes compartilhados
+│   ├── public-portal/          # Portal público (React)
+│   ├── institutional-panel/    # Painel institucional (React)
+│   ├── victim-portal/          # Portal para vítimas (React)
+│   └── shared/                 # Componentes compartilhados
 │
 ├── docs/
 │   ├── README.md
 │   ├── ROADMAP.md
 │   ├── ARCHITECTURE.md
 │   ├── FEATURES_STATUS.md
-│   ├── CONTRIBUTING.md       # A criar
-│   └── API.md                # A criar
+│   └── API.md                  # A criar
 │
 ├── infra/
 │   ├── kubernetes/           # A criar
@@ -116,25 +118,28 @@ cp front-end/.env.example front-end/.env
 # Edite front-end/.env com suas configurações
 ```
 
-### 3. Inicie os Serviços com Docker (Recomendado)
+### 3. Inicie o Banco de Dados
+
+#### Com Docker (Recomendado)
 
 ```bash
-# Inicia todos os serviços (banco, cache, APIs, frontend)
-docker-compose up -d
-
-# Verificar status
-docker-compose ps
-
-# Ver logs
-docker-compose logs -f
+# MySQL com Docker
+docker run --name sinamdi-mysql \
+  -e MYSQL_ROOT_PASSWORD=root123 \
+  -e MYSQL_DATABASE=sinamdi \
+  -p 3306:3306 \
+  -d mysql:8.0
 ```
 
-### 4. OU Configure Manualmente
+#### Ou instale MySQL localmente
+Consulte: https://dev.mysql.com/doc/mysql-installation-excerpt/8.0/en/
+
+### 4. Configure Manualmente
 
 #### Backend (Node.js)
 
 ```bash
-cd back-end/auth-service
+cd back-end
 npm install
 npm run dev
 ```
@@ -144,17 +149,7 @@ npm run dev
 ```bash
 cd front-end/public-portal
 npm install
-npm run dev
-```
-
-#### Analytics (Python)
-
-```bash
-cd back-end/analytics-service
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn main:app --reload
+npm start
 ```
 
 ### 5. Inicialize o Banco de Dados
@@ -162,10 +157,10 @@ uvicorn main:app --reload
 ```bash
 # Execute as migrations
 cd back-end
-npm run db:migrate
+npm run migrate
 
 # (Opcional) Popule com dados de teste
-npm run db:seed
+npm run seed
 ```
 
 ---
@@ -279,45 +274,37 @@ Aguarde aprovação de pelo menos 1 revisor antes de fazer merge.
 
 ---
 
-## 🐳 Docker Commands Úteis
+## 🐳 Docker Commands Úteis (MySQL)
 
 ```bash
-# Rebuild completo
-docker-compose up --build
+# Ver logs do MySQL
+docker logs sinamdi-mysql
 
-# Parar todos os serviços
-docker-compose down
+# Acessar MySQL shell
+docker exec -it sinamdi-mysql mysql -u root -p
 
-# Parar e remover volumes (cuidado!)
-docker-compose down -v
+# Parar container
+docker stop sinamdi-mysql
 
-# Ver logs de um serviço específico
-docker-compose logs -f auth-service
+# Remover container (cuidado!)
+docker rm sinamdi-mysql
 
-# Executar comando em um container
-docker-compose exec auth-service npm run db:migrate
-
-# Acessar shell de um container
-docker-compose exec auth-service sh
+# Backup do banco
+docker exec sinamdi-mysql mysqldump -u root -proot123 sinamdi > backup.sql
 ```
 
 ---
 
-## 📊 Acessando os Serviços Localmente
+## 📊 Acessando os Serviços Localmente (MVP)
 
 Quando o ambiente estiver configurado, os serviços estarão disponíveis em:
 
 - **Portal Público:** http://localhost:3000
 - **Painel Institucional:** http://localhost:3001
 - **Portal Vítimas:** http://localhost:3002
-- **Admin Panel:** http://localhost:3003
-- **API Gateway:** http://localhost:4000
-- **Auth API:** http://localhost:4001
-- **Data API:** http://localhost:4002
-- **Analytics API:** http://localhost:4003
-- **PostgreSQL:** localhost:5432
-- **Redis:** localhost:6379
-- **Swagger Docs:** http://localhost:4000/docs
+- **Backend API:** http://localhost:4000
+- **MySQL:** localhost:3306
+- **API Docs:** http://localhost:4000/api-docs (se implementado)
 
 ---
 
@@ -344,19 +331,29 @@ npm install
 ### Problemas com Docker
 
 ```bash
+# Limpar tudo
 docker system prune -a
-docker-compose down -v
-docker-compose up --build
+
+# Recriar container MySQL
+docker rm sinamdi-mysql
+docker run --name sinamdi-mysql -e MYSQL_ROOT_PASSWORD=root123 -e MYSQL_DATABASE=sinamdi -p 3306:3306 -d mysql:8.0
 ```
 
 ### Banco de dados não inicializa
 
 ```bash
-docker-compose down -v
-docker volume rm sinamdi_postgres_data
-docker-compose up -d postgres
-# Aguarde ~30 segundos
-npm run db:migrate
+# Reiniciar MySQL container
+docker restart sinamdi-mysql
+
+# Verificar logs
+docker logs sinamdi-mysql
+
+# Ou remover e recriar
+docker rm -f sinamdi-mysql
+docker run --name sinamdi-mysql -e MYSQL_ROOT_PASSWORD=root123 -e MYSQL_DATABASE=sinamdi -p 3306:3306 -d mysql:8.0
+
+# Aguarde ~30 segundos e execute migrations
+npm run migrate
 ```
 
 ---
@@ -371,7 +368,7 @@ npm run db:migrate
 ### Tutoriais Recomendados
 - [React Documentation](https://react.dev/)
 - [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices)
-- [PostgreSQL Tutorial](https://www.postgresql.org/docs/)
+- [MySQL Tutorial](https://dev.mysql.com/doc/)
 - [Docker Getting Started](https://docs.docker.com/get-started/)
 
 ### Ferramentas Úteis

@@ -240,27 +240,29 @@ Hoje
 └───────────────────────────────────────────────────┘
 ```
 
-## 🎓 Stack Tecnológico Recomendado
+## 🎓 Stack Tecnológico - MVP
+
+> **Nota:** Stack simplificado para MVP, priorizando velocidade de desenvolvimento.
 
 ### Backend
 - **Runtime:** Node.js 18+
-- **Framework:** Express.js / Fastify
-- **Banco:** PostgreSQL 14+
-- **Cache:** Redis 7+
-- **ORM:** Prisma / TypeORM
+- **Framework:** Express.js
+- **Banco:** **MySQL 8.0+** (MVP)
+- **Cache:** Redis (opcional)
+- **ORM:** Sequelize ou TypeORM
 
 ### Frontend
-- **Framework:** React 18 / Next.js 14
-- **UI Library:** Material-UI / Ant Design
-- **Gráficos:** Chart.js + D3.js
-- **Estado:** Redux / Zustand
-- **Estilo:** Tailwind CSS
+- **Framework:** React 18
+- **UI Library:** Material-UI ou Ant Design
+- **Gráficos:** Chart.js
+- **Estado:** Context API ou Redux (se necessário)
+- **Estilo:** Tailwind CSS ou CSS Modules
 
-### Infraestrutura
-- **Cloud:** AWS / GCP / Azure
-- **Containers:** Docker + Kubernetes
-- **CI/CD:** GitHub Actions
-- **Monitoramento:** Prometheus + Grafana
+### Infraestrutura (MVP)
+- **Hospedagem:** VPS simples ou cloud básica
+- **Containers:** Docker (opcional)
+- **CI/CD:** GitHub Actions (básico)
+- **Monitoramento:** Logs básicos
 
 ## 📝 Conclusão Executiva
 

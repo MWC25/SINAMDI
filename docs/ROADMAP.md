@@ -1,27 +1,29 @@
-# Roadmap de Desenvolvimento - SINAMDI
+# Roadmap de Desenvolvimento - SINAMDI (MVP)
 
 ## Visão Geral
 
-Este documento apresenta o roadmap detalhado para o desenvolvimento completo do SINAMDI, dividido em sprints e milestones.
+Este documento apresenta o roadmap para o desenvolvimento do **MVP (Minimum Viable Product)** do SINAMDI, dividido em sprints e milestones. O foco é entregar funcionalidades essenciais com tecnologias simplificadas.
 
-## 🎯 Milestones Principais
+> **Nota MVP:** Este roadmap foi ajustado para refletir um desenvolvimento MVP com escopo reduzido, utilizando MySQL como banco de dados e arquitetura monolítica modular.
+
+## 🎯 Milestones Principais (MVP)
 
 ### Milestone 1: Infraestrutura Base (Mês 1-2)
-**Objetivo:** Estabelecer fundação técnica do projeto
+**Objetivo:** Estabelecer fundação técnica do projeto MVP
 
 **Entregáveis:**
 - Setup completo do ambiente de desenvolvimento
-- Configuração de repositório e CI/CD
-- Definição de arquitetura
-- Configuração de banco de dados
-- API REST básica funcionando
-- Sistema de autenticação implementado
+- Configuração de repositório e CI/CD básico
+- Definição de arquitetura MVP (monolítica modular)
+- Configuração de **MySQL 8.0+**
+- API REST básica funcionando (Node.js + Express)
+- Sistema de autenticação JWT implementado
 
 **Critérios de Sucesso:**
 - API responde a requisições básicas
 - Usuários podem se autenticar
-- Pipeline de CI/CD executando
-- Banco de dados configurado e migrações funcionando
+- Pipeline de CI/CD básico executando
+- MySQL configurado e migrações funcionando
 
 ---
 

@@ -4,6 +4,8 @@
 
 O SINAMDI é uma aplicação nacional de insights e monitoramento da dependência de internet, desenvolvida para centralizar dados e fornecer informações estratégicas ao governo e à sociedade sobre casos de dependência digital no Brasil.
 
+> **⚠️ NOTA:** Este projeto está sendo desenvolvido como um **MVP (Minimum Viable Product)** com escopo reduzido e tecnologias simplificadas para viabilizar uma implementação inicial rápida.
+
 ## 🎯 Proposta Original
 
 O projeto foi concebido com os seguintes objetivos:
@@ -107,7 +109,7 @@ O projeto foi concebido com os seguintes objetivos:
 
 ### Fase 1: Fundação (Backend)
 1. Definir stack tecnológico (Node.js/Python/Java)
-2. Configurar banco de dados (PostgreSQL/MongoDB)
+2. Configurar banco de dados (**MySQL** para MVP)
 3. Implementar API REST básica
 4. Criar sistema de autenticação
 5. Desenvolver modelos de dados
@@ -144,23 +146,27 @@ O projeto foi concebido com os seguintes objetivos:
 
 ## 🛠️ Stack Tecnológico Sugerido
 
+### MVP (Versão Inicial)
+> **Nota:** O MVP utiliza tecnologias simplificadas para acelerar o desenvolvimento inicial.
+
 ### Backend
-- **Runtime:** Node.js ou Python
-- **Framework:** Express.js / FastAPI
-- **Banco de Dados:** PostgreSQL + Redis
-- **ORM:** Prisma / SQLAlchemy
-- **Autenticação:** JWT + OAuth2
+- **Runtime:** Node.js
+- **Framework:** Express.js
+- **Banco de Dados:** **MySQL 8.0+** (MVP)
+- **Cache:** Redis (opcional no MVP)
+- **ORM:** Sequelize ou TypeORM
+- **Autenticação:** JWT
 
 ### Frontend
-- **Framework:** React.js / Next.js
+- **Framework:** React.js
 - **UI Library:** Material-UI ou Ant Design
-- **Gráficos:** Chart.js + D3.js
-- **Estado:** Redux ou Context API
-- **Estilização:** Tailwind CSS
+- **Gráficos:** Chart.js
+- **Estado:** Context API ou Redux (se necessário)
+- **Estilização:** Tailwind CSS ou CSS Modules
 
 ### Infraestrutura
-- **Cloud:** AWS / Google Cloud / Azure
-- **Containerização:** Docker
+- **Cloud:** AWS / Google Cloud / Azure (ou servidor simples para MVP)
+- **Containerização:** Docker (opcional no MVP)
 - **Orquestração:** Kubernetes (opcional)
 - **CI/CD:** GitHub Actions
 - **Monitoramento:** Prometheus + Grafana

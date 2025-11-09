@@ -4,13 +4,15 @@
 
 Este documento serve como ponto de entrada para entender o estado atual do projeto.
 
+> **⚠️ MVP:** Este projeto será desenvolvido como **Minimum Viable Product** com escopo reduzido e tecnologias simplificadas, incluindo **MySQL** como banco de dados.
+
 ## ❓ Você Perguntou: "O que esse projeto já cumpriu?"
 
 ### Resposta Rápida
 
 **O projeto SINAMDI cumpriu apenas ~3% da proposta original:**
 - ✅ Estrutura de pastas criada
-- ✅ Documentação completa elaborada
+- ✅ Documentação completa elaborada (com especificações MVP)
 - ❌ Nenhum código funcional implementado
 
 ### Para Resposta Detalhada
@@ -21,7 +23,7 @@ Esse documento responde especificamente à sua pergunta com:
 - O que foi implementado ✅
 - O que NÃO foi implementado ❌
 - Análise quantitativa
-- Estimativas de esforço
+- Estimativas de esforço MVP
 - Próximos passos
 
 ---
