@@ -1,0 +1,103 @@
+{
+    "sinamdi_dashboard": {
+        "ultima_atualizacao": "2025-11-12T08:00:00Z",
+        "indicadores_gerais": {
+            "total_casos": 18452,
+            "casos_ativos": 7321,
+            "casos_encerrados": 11131,
+            "instituicoes_cadastradas": 1274,
+            "autoavaliacoes_realizadas": 56891
+        },
+        "taxas": {
+            "indice_dependencia_digital": 27.4,
+            "taxa_recuperacao": 60.3,
+            "taxa_crescimento_mensal": 8.7,
+            "tempo_medio_acompanhamento_dias": 46
+        },
+        "distribuicao_faixa_etaria": [
+            { "faixa": "10-14", "total": 2180, "risco_medio": 61 },
+            { "faixa": "15-19", "total": 5890, "risco_medio": 74 },
+            { "faixa": "20-29", "total": 4710, "risco_medio": 66 },
+            { "faixa": "30-39", "total": 3230, "risco_medio": 52 },
+            { "faixa": "40+", "total": 2442, "risco_medio": 41 }
+        ],
+        "distribuicao_regional": [
+            { "regiao": "Nordeste", "casos_ativos": 2670, "ira": 18.4 },
+            { "regiao": "Sudeste", "casos_ativos": 2415, "ira": 14.8 },
+            { "regiao": "Sul", "casos_ativos": 1095, "ira": 9.6 },
+            { "regiao": "Centro-Oeste", "casos_ativos": 764, "ira": 11.2 },
+            { "regiao": "Norte", "casos_ativos": 377, "ira": 6.9 }
+        ],
+        "series_temporais": {
+            "evolucao_mensal": [
+                { "mes": "2025-06", "casos": 14210, "idd": 21.9 },
+                { "mes": "2025-07", "casos": 15100, "idd": 23.5 },
+                { "mes": "2025-08", "casos": 15930, "idd": 24.7 },
+                { "mes": "2025-09", "casos": 16980, "idd": 25.4 },
+                { "mes": "2025-10", "casos": 17950, "idd": 26.8 },
+                { "mes": "2025-11", "casos": 18452, "idd": 27.4 }
+            ],
+            "avaliacoes_por_dia": [
+                { "data": "2025-11-01", "quantidade": 1420 },
+                { "data": "2025-11-02", "quantidade": 1580 },
+                { "data": "2025-11-03", "quantidade": 1625 },
+                { "data": "2025-11-04", "quantidade": 1498 },
+                { "data": "2025-11-05", "quantidade": 1760 },
+                { "data": "2025-11-06", "quantidade": 1822 },
+                { "data": "2025-11-07", "quantidade": 1910 }
+            ]
+        },
+        "tipos_instituicao": [
+            { "tipo": "Escola", "quantidade": 820 },
+            { "tipo": "Clínica", "quantidade": 205 },
+            { "tipo": "CAPS", "quantidade": 109 },
+            { "tipo": "ONG", "quantidade": 73 },
+            { "tipo": "Outros", "quantidade": 67 }
+        ],
+        "analise_ia_predicao": [
+            {
+                "faixa_etaria": "15-19",
+                "risco_previsto_proximo_mes": 0.32,
+                "fatores_chave": [
+                    "tempo_medio_diario_online",
+                    "uso_apps_sociais",
+                    "isolamento_escolar"
+                ]
+            },
+            {
+                "faixa_etaria": "20-29",
+                "risco_previsto_proximo_mes": 0.26,
+                "fatores_chave": [
+                    "horas_excesso_trabalho_digital",
+                    "falta_exercicios",
+                    "insônia"
+                ]
+            },
+            {
+                "faixa_etaria": "30-39",
+                "risco_previsto_proximo_mes": 0.18,
+                "fatores_chave": [
+                    "estresse_profissional",
+                    "uso_apps_produtividade"
+                ]
+            }
+        ],
+        "correlacoes_estatisticas": {
+            "tempo_online_vs_risco": 0.84,
+            "uso_redes_sociais_vs_risco": 0.76,
+            "atividade_fisica_vs_risco": -0.62
+        },
+        "alertas": [
+            {
+                "tipo": "Alta concentração de casos",
+                "regiao": "Nordeste",
+                "mensagem": "Aumento de 14% nos casos em adolescentes nas últimas 3 semanas."
+            },
+            {
+                "tipo": "Risco crescente",
+                "regiao": "Sudeste",
+                "mensagem": "Usuários adultos entre 25 e 35 anos com crescimento de risco de 9%."
+            }
+        ]
+    }
+}
