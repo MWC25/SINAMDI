@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "rootDir": "./src",
+        "outDir": "./dist",
+
+        "module": "Node16",
+        "target": "es2020",
+        "moduleResolution": "node16",
+        "types": ["node"],
+        "ignoreDeprecations": "6.0",
+
+        "sourceMap": true,
+        "declaration": true,
+        "declarationMap": true,
+
+        "noUncheckedIndexedAccess": true,
+        "exactOptionalPropertyTypes": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "strict": true,
+        "skipLibCheck": true
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "dist", "prisma.config.ts", "prisma"]
+}
