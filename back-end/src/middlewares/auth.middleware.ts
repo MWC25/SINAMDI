@@ -17,17 +17,15 @@ export function authorization(req: any, res: any, next: any) {
         const decoded = JWTProvider.verifyToken(token);
 
         if (!decoded || !decoded.id) {
-            return res.status(401).json({
-                error: true,
-                message: 'Invalid token.',
-            });
+            throw new Error('Invalid token payload.');
         }
 
         return next();
     } catch (error: any) {
-        logger.error('Authorization Middleware Error: ', error.message);
-        return res.status(401).json({
-            message: error.message,
-        });
+        logger.error(`Authorization Middleware Error: ${error.message}`);
+         return res.status(401).json({
+             error: true,
+             message: 'Invalid token.',
+         });
     }
 }
