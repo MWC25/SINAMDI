@@ -30,3 +30,93 @@ model User {
     updatedAt DateTime @updatedAt
     lastLogin DateTime?
 }
+
+model patient {
+    id String @id @default(cuid())
+    name String
+    birthDate DateTime
+    cpf String @unique
+    phone String
+    email String @unique
+    address String
+    collects Collect[]
+}
+
+model Collect {
+    id String @id @default(cuid())
+    collectedAt DateTime @default(now())
+    locationCity String
+    locationState State
+    patientId String
+    patient patient? @relation(fields: [patientId], references: [id])
+    institutionId String?
+    institution Institution? @relation(fields: [institutionId], references: [id])
+    channel CollectChannel
+    ageRange AgeRange
+    riskLevel CollectRisk
+    source String?
+}
+
+model Institution {
+    id String @id @default(cuid())
+    name String
+    address String
+    type String? // escola, ONG, clínica...
+    city String
+    state String
+    collects Collect[]
+}
+
+
+enum State {
+  AC
+  AL
+  AP
+  AM
+  BA
+  CE
+  DF
+  ES
+  GO
+  MA
+  MT
+  MS
+  MG
+  PA
+  PB
+  PR
+  PE
+  PI
+  RJ
+  RN
+  RS
+  RO
+  RR
+  SC
+  SP
+  SE
+  TO
+}
+
+enum AgeRange {
+  AGE_0_4
+  AGE_5_9
+  AGE_10_14
+  AGE_15_18
+  AGE_19_24
+  AGE_25_34
+  AGE_35_44
+  AGE_45_59
+  AGE_60_PLUS
+}
+
+enum CollectChannel {
+    PRESENCIAL //CONSULTA PRESENCIAL
+    ONLINE //AUTO AVALIAÇÃO
+}
+
+enum CollectRisk {
+    BAIXO
+    MEDIO
+    ALTO
+}
