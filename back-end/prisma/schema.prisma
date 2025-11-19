@@ -1,14 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-enum Role{
-    ADMIN
-    USER
-}
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -24,99 +13,249 @@ model User {
     username String @unique
     registration String @unique
     passwordHash String
-    role Role @default(USER)
+    role Role @default(COMMON)
     createdAt DateTime @default(now())
-    isActive Boolean @default(true)
     updatedAt DateTime @updatedAt
+    isActive Boolean @default(true)
     lastLogin DateTime?
+    
+    institutionId String?
+    institution Institution? @relation(fields: [institutionId], references: [id])
 }
 
-model patient {
+model Patient {
     id String @id @default(cuid())
     name String
-    birthDate DateTime
-    cpf String @unique
-    phone String
+    cpf String @unique @db.VarChar(11)
+    phone String @db.VarChar(11)
     email String @unique
-    address String
-    collects Collect[]
+    lastCollectionAt DateTime?
+    patientStatus PatientStatus @default(ATIVO)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    address AddressPatient?
 }
 
 model Collect {
     id String @id @default(cuid())
     collectedAt DateTime @default(now())
-    locationCity String
-    locationState State
-    patientId String
-    patient patient? @relation(fields: [patientId], references: [id])
-    institutionId String?
-    institution Institution? @relation(fields: [institutionId], references: [id])
     channel CollectChannel
-    ageRange AgeRange
-    riskLevel CollectRisk
-    source String?
-}
+    patientHash String
+    institutionId String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
+    institution Institution? @relation(fields: [institutionId], references: [id])
+    collectData CollectData?
+
+    @@index([collectedAt])
+    @@index([channel])
+    @@index([patientHash])
+    @@index([institutionId])
+}
 model Institution {
     id String @id @default(cuid())
     name String
-    address String
-    type String? // escola, ONG, clínica...
-    city String
-    state String
+    type InstitutionType
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
     collects Collect[]
+    address AddressInstitution?
+    users User[]
+}
+
+
+model AddressInstitution {
+    id String @id @default(cuid())
+    street String
+    number String
+    complement String?
+    neighborhood String
+    city String
+    state State
+    zipCode String @db.VarChar(8) //ex: 53690000
+    
+    institutionId String? @unique
+    institution Institution? @relation(fields: [institutionId], references:[id])
+}
+
+model AddressPatient {
+    id String @id @default(cuid())
+    street String
+    number String
+    complement String?
+    neighborhood String
+    city String
+    state State
+    zipCode String @db.VarChar(8) //ex: 53690000
+    
+    patientId String? @unique
+    patient Patient? @relation(fields: [patientId], references:[id])
+}
+
+model CollectData {
+    id        String   @id @default(cuid())
+
+    collectId String   @unique
+    collect   Collect  @relation(fields: [collectId], references: [id])
+
+    // ---------------------------
+    // 1) Perfil do respondente
+    // ---------------------------
+
+    ageRange      AgeRange
+    ageYears      Int?          // opcional: idade exata no momento da coleta
+    gender        Gender?       // se quiser coletar
+    schooling     Schooling?    // escolaridade
+    state         State         // redundante mas útil pra analytics direto da coleta
+    city          String
+
+    // ---------------------------
+    // 2) Comportamento digital
+    // ---------------------------
+
+    dailyScreenTimeMin      Int      // tempo total de tela no dia típico
+    socialMediaMin          Int      // redes sociais
+    gamesMin                Int      // jogos digitais
+    videoStreamingMin       Int      // YouTube, Netflix, etc
+    shortVideoMin           Int      // TikTok, Reels, Shorts
+    nightUsageMin           Int      // uso entre 00h-06h
+    bingeEpisodesPerWeek    Int      // sessões muito longas por semana (ex: >3h)
+    devicesCount            Int      // quantos dispositivos usa (cel, pc, tablet)
+    notificationsPerDay     Int?     // se perguntar isso
+
+    // apps/categorias em formato flexível
+    appsUsage Json? // ex: [{ "cat": "SOCIAL", "min": 120 }, { "cat": "GAMES", "min": 90 }]
+
+    // ---------------------------
+    // 3) Questionário / risco
+    // ---------------------------
+
+    dependencyScore Int        // 0-100 padronizado
+    riskLevel       CollectRisk
+    questionnaireVersion String
+
+    // respostas detalhadas (pra recalcular coisas depois, se precisar)
+    rawAnswers Json? // ex: { "Q1": 3, "Q2": 5, "Q3": 1 ... }
+
+    // ---------------------------
+    // 4) Estado emocional / rotina
+    // ---------------------------
+
+    sleepQualityScore Int?     // tipo 0–21 ou 0–10 (documenta na app)
+    hasInsomnia       Boolean? // sim/não
+    anxietyScore      Int?     // tipo escala 0–21 ou 0–27
+    depressionScore   Int?
+    isolationScore    Int?     // se sente isolado socialmente
+    physicalActivityPerWeek Int? // quantidade de dias/semana com exercício
+
+    // ---------------------------
+    // 5) Metadados de consentimento
+    // ---------------------------
+
+    hasConsent    Boolean      // aceitou o termo LGPD
+    consentAt     DateTime?
+    notes         String?      // campo livre curto, se for usar
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([ageRange])
+    @@index([riskLevel])
+    @@index([state])
+    @@index([dependencyScore])
+    @@index([questionnaireVersion])
 }
 
 
 enum State {
-  AC
-  AL
-  AP
-  AM
-  BA
-  CE
-  DF
-  ES
-  GO
-  MA
-  MT
-  MS
-  MG
-  PA
-  PB
-  PR
-  PE
-  PI
-  RJ
-  RN
-  RS
-  RO
-  RR
-  SC
-  SP
-  SE
-  TO
+    AC
+    AL
+    AP
+    AM
+    BA
+    CE
+    DF
+    ES
+    GO
+    MA
+    MT
+    MS
+    MG
+    PA
+    PB
+    PR
+    PE
+    PI
+    RJ
+    RN
+    RS
+    RO
+    RR
+    SC
+    SP
+    SE
+    TO
 }
 
 enum AgeRange {
-  AGE_0_4
-  AGE_5_9
-  AGE_10_14
-  AGE_15_18
-  AGE_19_24
-  AGE_25_34
-  AGE_35_44
-  AGE_45_59
-  AGE_60_PLUS
+AGE_6a11
+AGE_12a14
+AGE_15a17
+AGE_18a25
+AGE_26a40
+AGE_41a59
+AGE_60a74
+AGE_75a89
+AGE_90Plus
 }
 
 enum CollectChannel {
-    PRESENCIAL //CONSULTA PRESENCIAL
-    ONLINE //AUTO AVALIAÇÃO
+    PRESENCIAL
+    ONLINE
 }
 
 enum CollectRisk {
     BAIXO
     MEDIO
     ALTO
+}
+
+enum Role {
+    ADMIN
+    COMMON
+    PATIENT
+}
+
+enum InstitutionType {
+    HOSPITAL
+    CLINIC
+    SCHOOL
+    COMPANY
+    ONG
+    DEVs
+}
+
+enum PatientStatus {
+    ATIVO
+    INATIVO
+    SUSPENSO
+}
+
+enum Gender {
+  MASCULINO
+  FEMININO
+  OUTRO
+  NAO_INFORMADO
+}
+
+enum Schooling {
+  FUNDAMENTAL
+  MEDIO
+  TECNICO
+  SUPERIOR
+  POS
+  NAO_INFORMADO
 }
