@@ -1,3 +1,10 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -23,20 +30,6 @@ model User {
     institution Institution? @relation(fields: [institutionId], references: [id])
 }
 
-model Patient {
-    id String @id @default(cuid())
-    name String
-    cpf String @unique @db.VarChar(11)
-    phone String @db.VarChar(11)
-    email String @unique
-    lastCollectionAt DateTime?
-    patientStatus PatientStatus @default(ATIVO)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    address AddressPatient?
-}
-
 model Collect {
     id String @id @default(cuid())
     collectedAt DateTime @default(now())
@@ -54,6 +47,7 @@ model Collect {
     @@index([patientHash])
     @@index([institutionId])
 }
+
 model Institution {
     id String @id @default(cuid())
     name String
@@ -65,7 +59,6 @@ model Institution {
     address AddressInstitution?
     users User[]
 }
-
 
 model AddressInstitution {
     id String @id @default(cuid())
@@ -95,9 +88,28 @@ model AddressPatient {
     patient Patient? @relation(fields: [patientId], references:[id])
 }
 
+model Patient {
+    id String @id @default(cuid())
+    name String
+    cpf String @unique @db.VarChar(11)
+    phone String @db.VarChar(11)
+    email String @unique
+    lastCollectionAt DateTime?
+    patientStatus PatientStatus @default(ATIVO)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    birthDate DateTime
+    sleepQuality Int
+    isInsomnia Boolean @default(false)
+
+    gender        Gender?       
+    schooling     Schooling?
+
+    address AddressPatient?
+}
+
 model CollectData {
     id        String   @id @default(cuid())
-
     collectId String   @unique
     collect   Collect  @relation(fields: [collectId], references: [id])
 
@@ -105,8 +117,7 @@ model CollectData {
     // 1) Perfil do respondente
     // ---------------------------
 
-    ageRange      AgeRange
-    ageYears      Int?          // opcional: idade exata no momento da coleta
+    ageRange      AgeRange      // opcional: idade exata no momento da coleta
     gender        Gender?       // se quiser coletar
     schooling     Schooling?    // escolaridade
     state         State         // redundante mas útil pra analytics direto da coleta
@@ -117,17 +128,8 @@ model CollectData {
     // ---------------------------
 
     dailyScreenTimeMin      Int      // tempo total de tela no dia típico
-    socialMediaMin          Int      // redes sociais
-    gamesMin                Int      // jogos digitais
-    videoStreamingMin       Int      // YouTube, Netflix, etc
-    shortVideoMin           Int      // TikTok, Reels, Shorts
     nightUsageMin           Int      // uso entre 00h-06h
-    bingeEpisodesPerWeek    Int      // sessões muito longas por semana (ex: >3h)
     devicesCount            Int      // quantos dispositivos usa (cel, pc, tablet)
-    notificationsPerDay     Int?     // se perguntar isso
-
-    // apps/categorias em formato flexível
-    appsUsage Json? // ex: [{ "cat": "SOCIAL", "min": 120 }, { "cat": "GAMES", "min": 90 }]
 
     // ---------------------------
     // 3) Questionário / risco
@@ -144,19 +146,18 @@ model CollectData {
     // 4) Estado emocional / rotina
     // ---------------------------
 
-    sleepQualityScore Int?     // tipo 0–21 ou 0–10 (documenta na app)
-    hasInsomnia       Boolean? // sim/não
-    anxietyScore      Int?     // tipo escala 0–21 ou 0–27
-    depressionScore   Int?
-    isolationScore    Int?     // se sente isolado socialmente
-    physicalActivityPerWeek Int? // quantidade de dias/semana com exercício
+    sleepQualityScore Int     // tipo 0–21 ou 0–10 (documenta na app)// sim/não
+    anxietyScore      Int     // tipo escala 0–21 ou 0–27
+    depressionScore   Int
+    isolationScore    Int     // se sente isolado socialmente
+    physicalActivityPerWeek Int // quantidade de dias/semana com exercício
 
     // ---------------------------
     // 5) Metadados de consentimento
     // ---------------------------
 
     hasConsent    Boolean      // aceitou o termo LGPD
-    consentAt     DateTime?
+    consentAt     DateTime
     notes         String?      // campo livre curto, se for usar
 
     createdAt DateTime @default(now())
@@ -201,15 +202,15 @@ enum State {
 }
 
 enum AgeRange {
-AGE_6a11
-AGE_12a14
-AGE_15a17
-AGE_18a25
-AGE_26a40
-AGE_41a59
-AGE_60a74
-AGE_75a89
-AGE_90Plus
+    AGE_6a11
+    AGE_12a14
+    AGE_15a17
+    AGE_18a25
+    AGE_26a40
+    AGE_41a59
+    AGE_60a74
+    AGE_75a89
+    AGE_90Plus
 }
 
 enum CollectChannel {
@@ -227,6 +228,7 @@ enum Role {
     ADMIN
     COMMON
     PATIENT
+    HEALTH_PROFESSIONAL
 }
 
 enum InstitutionType {

@@ -1,5 +1,5 @@
 import { userDTO } from "../DTOs/user.dto"
-import { User } from "../generated/prisma/client";
+import { Role, User } from "../generated/prisma/client";
 import { AdminRepository } from "../repositories/admin.repository";
 import { hashPassword } from "../util/cryptPassword";
 import { generateRegistration } from "../util/generateResitration";
@@ -14,7 +14,9 @@ export const AdminService = {
                 username: dto.username,
                 passwordHash: hashedPassword,
                 registration: generateRegistration(),
-                role: 'ADMIN',
+                role: Role.ADMIN,
+                
+
             });
 
             return newAdmin;
