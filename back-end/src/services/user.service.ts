@@ -7,7 +7,7 @@ import { generateRegistration } from '../util/generateResitration';
 
 
 export const userService = {
-    
+
     async createUser(userData: UserDTOType): Promise<User> {
     const hashedPassword = await hashPassword(userData.password)
     const registration = generateRegistration();
@@ -53,14 +53,39 @@ export const userService = {
         return user;
     },
 
-    async upddateUser(userId: string, userData: Partial<UserDTOType>): Promise<User> {
+       async updateUser(userId: string, userData: Partial<UserDTOType>): Promise<User> {
         // Implementation for updating user
-        throw new Error('Not implemented.');
+        const user = await userRepository.getUserById(userId);
+        if(!user) {
+            throw new Error('User not found.');
+        }
+
+        const updateData: any ={};
+
+        if (userData.username) {
+            updateData.username = userData.username;
+        }
+        if (userData.password) {
+            updateData.passwordHash = await hashPassword(userData.password);
+        }
+        if (userData.institutionName) {
+            const institution = await institutionRepository.getInstitutionByName(userData.institutionName);
+            if (!institution) {
+                throw new Error('Institution not found.');
+            }
+            updateData.institutionId = institution.id;
+        }
+        return await userRepository.updateUser(userId, updateData);
     },
 
     async deleteUser(userId: string): Promise<void> {
         // Implementation for deleting user
-        throw new Error('Not implemented.');
+
+    },
+
+    async getAllUsers() {
+        const users = await userRepository.getAllUsers();
+        return users;
     }
 };
 

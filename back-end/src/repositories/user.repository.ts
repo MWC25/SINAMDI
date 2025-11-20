@@ -49,10 +49,36 @@ export const userRepository = {
     },
 
     async updateUser(userId: string, userData: Partial<{ username: string; passwordHash: string; institutionId: string; registration: string; }>) {
-
+        return await prisma.user.update({
+            where: {
+                id: userId,
+            },
+            data: userData,
+        });
     },
 
     async deleteUser(userId: string) {
 
     },
+
+    async getAllUsers() {
+        return await prisma.user.findMany({
+            select: {
+                id:true,
+                username: true,
+                registration: true,
+                role: true,
+                institution: {
+                    select: {
+                        name: true,
+                    }
+                }
+            }
+     });
+    },
+
+
+
 };
+
+
