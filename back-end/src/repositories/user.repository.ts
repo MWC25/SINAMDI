@@ -1,11 +1,58 @@
-import { prisma } from "../config/prisma"
+import { prisma } from '../config/prisma';
+import { Institution } from '../generated/prisma/client';
 
 export const userRepository = {
-    async getUser(username: string){
+    async getUserByUserName(username: string) {
         return await prisma.user.findUnique({
             where: {
                 username: username,
             },
         });
-    }
-}
+    },
+
+    async createUserWithInstitution(userData: {
+        username: string;
+        password: string;
+        institution: Institution;
+        registration: string;
+    }) {
+        return await prisma.user.create({
+            data: {
+                username: userData.username,
+                passwordHash: userData.password,
+                institutionId: userData.institution.id,
+                registration: userData.registration,
+            },
+        });
+    },
+
+    async createUser(userData: {
+        username: string;
+        password: string;
+        registration: string;
+    }) {
+        return await prisma.user.create({
+            data: {
+                username: userData.username,
+                passwordHash: userData.password,
+                registration: userData.registration,
+            },
+        });
+    },
+
+    async getUserById(userId: string) {
+        return await prisma.user.findUnique({
+            where: {
+                id: userId,
+            },
+        });
+    },
+
+    async updateUser(userId: string, userData: Partial<{ username: string; passwordHash: string; institutionId: string; registration: string; }>) {
+
+    },
+
+    async deleteUser(userId: string) {
+
+    },
+};

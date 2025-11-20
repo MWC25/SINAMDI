@@ -9,7 +9,7 @@ export const authService = {
 
         const {username, password}= req.body;        
 
-        const user = await userRepository.getUser(username)
+        const user = await userRepository.getUserByUserName(username)
 
         if (!user){
             return res.status(401).json({
