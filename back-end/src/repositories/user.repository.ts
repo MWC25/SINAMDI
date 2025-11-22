@@ -1,5 +1,5 @@
 import { prisma } from '../config/prisma';
-import { Institution } from '../generated/prisma/client';
+import { Prisma, Institution } from '../generated/prisma/client';
 
 export const userRepository = {
     async getUserByUserName(username: string) {
@@ -48,7 +48,7 @@ export const userRepository = {
         });
     },
 
-    async updateUser(userId: string, userData: Partial<{ username: string; passwordHash: string; institutionId: string; registration: string; }>) {
+    async updateUser(userId: string, userData: Partial<Prisma.UserUncheckedUpdateInput>) {
         return await prisma.user.update({
             where: {
                 id: userId,
@@ -58,7 +58,11 @@ export const userRepository = {
     },
 
     async deleteUser(userId: string) {
-
+        await prisma.user.delete({
+            where: {
+                id: userId,
+            },
+        });
     },
 
     async getAllUsers() {
@@ -76,9 +80,6 @@ export const userRepository = {
             }
      });
     },
-
-
-
 };
 
 
