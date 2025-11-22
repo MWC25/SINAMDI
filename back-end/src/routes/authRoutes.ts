@@ -1,21 +1,42 @@
-import { Request, Response, Router } from "express";
-import { authController } from "../controllers/auth.controller";
-import { authorization } from "../middlewares/auth.middleware";
+import { Request, Response, Router } from 'express';
+import { authController } from '../controllers/auth.controller';
 
 const router: Router = Router();
 
-router.post('/auth/login', (req: Request, res: Response, next)=>{
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: Endpoints for authentication
+ */
+
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: User login
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Successful login, returns a JWT token and user information
+ *       401:
+ *         description: Unauthorized
+ */
+
+router.post('/auth/login', (req: Request, res: Response, next) => {
     return authController.login(req, res, next);
-})
-
-router.get('/auth/validate', authorization, (req: Request, res: Response)=>{
-    
-    console.log(res.locals.user);
-
-    return res.status(200).json({
-        message: "Token is valid"
-    });
-})
-
+});
 
 export default router;
