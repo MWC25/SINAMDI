@@ -19,13 +19,12 @@ export const patientService = {
     },
 
     async update(id: string, data: Partial<PatientDTOType>) {
-        // Check if patient exists
         await this.getById(id);
         return await patientRepository.update(id, data);
     },
 
     async delete(id: string) {
-        // Check if patient exists
+
         await this.getById(id);
         return await patientRepository.delete(id);
     }
