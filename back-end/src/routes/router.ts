@@ -10,8 +10,8 @@ const router: Router = Router();
 
 router.use(authRoutes)
 router.use(userRoutes)
-router.use('/patient', patientRoutes)
-router.use('/api/doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+router.use(patientRoutes)
 router.use(institutionRoutes)
+router.use('/api/doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 export default router;

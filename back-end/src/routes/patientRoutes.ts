@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Request, Response, Router } from 'express';
 import { patientController } from '../controllers/patient.controller';
 import { authorization } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/authorizeRoles.midleware';
@@ -7,30 +7,34 @@ import { Role } from '../generated/prisma/enums';
 
 const router: Router = Router();
 
-router.post('patient/create',
+router.post('/patient/create',
     authorization,
     authorizeRoles(Role.ADMIN, Role.HEALTH_PROFESSIONAL),
-    (req, res) => patientController.create(req, res));
+    (req: Request, res: Response) => patientController.create(req, res));
 
-router.get('patient/getall',
+router.get('/patient/all',
     authorization,
     authorizeRoles(Role.ADMIN, Role.HEALTH_PROFESSIONAL),
-    (req, res) => patientController.getAll(req, res));
+    (req: Request, res: Response) => patientController.getAll(req, res));
 
-router.get('patient/getbyId/:id',
+router.get('/patient/get/:id',
     authorization,
     authorizeRoles(Role.ADMIN, Role.HEALTH_PROFESSIONAL),
-    (req, res) => patientController.getById(req, res));
+    (req: Request, res: Response) => patientController.getById(req, res));
 
-router.put('/update/:id',
+router.put(
+    '/patient/update/:id',
     authorization,
     authorizeRoles(Role.ADMIN, Role.HEALTH_PROFESSIONAL),
-    (req, res) => patientController.update(req, res));
+    (req: Request, res: Response) => patientController.update(req, res)
+);
 
-router.delete('/delete/:id',
+router.delete(
+    '/patient/delete/:id',
     authorization,
     authorizeRoles(Role.ADMIN, Role.HEALTH_PROFESSIONAL),
-    (req, res) => patientController.delete(req, res));
+    (req: Request, res: Response) => patientController.delete(req, res)
+);
 
 export default router;
 
