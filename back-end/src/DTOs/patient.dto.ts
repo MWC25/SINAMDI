@@ -22,18 +22,6 @@ export type PatientDTOType = {
   }
 };
 
-function parseDate(dateStr: string): string {
-  // Check if format is DDMMYYYY
-  if (/^\d{8}$/.test(dateStr)) {
-    const day = dateStr.substring(0, 2);
-    const month = dateStr.substring(2, 4);
-    const year = dateStr.substring(4, 8);
-    return `${year}-${month}-${day}`;
-  }
-  // Return original if it doesn't match (assuming it might be ISO already)
-  return dateStr;
-}
-
 export const patientDTO = {
   buildCreatePatientDto(data: any): PatientDTOType {
     if (!data.name || !data.cpf || !data.phone || !data.email || !data.birthDate) {
@@ -49,7 +37,7 @@ export const patientDTO = {
       cpf: String(data.cpf),
       phone: String(data.phone),
       email: String(data.email),
-      birthDate: parseDate(String(data.birthDate)),
+      birthDate: String(data.birthDate),
       address: {
         street: String(data.address.street),
         number: String(data.address.number),
@@ -74,7 +62,7 @@ export const patientDTO = {
     if (data.cpf) dto.cpf = String(data.cpf);
     if (data.phone) dto.phone = String(data.phone);
     if (data.email) dto.email = String(data.email);
-    if (data.birthDate) dto.birthDate = parseDate(String(data.birthDate));
+    if (data.birthDate) dto.birthDate = String(data.birthDate);
     if (data.sleepQuality !== undefined) dto.sleepQuality = Number(data.sleepQuality);
     if (data.isInsomnia !== undefined) dto.isInsomnia = Boolean(data.isInsomnia);
     if (data.patientStatus) dto.patientStatus = data.patientStatus as PatientStatus;

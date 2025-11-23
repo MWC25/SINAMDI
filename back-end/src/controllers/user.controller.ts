@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Role } from '../generated/prisma/enums';
+
 import { userDTO, UserDTOType } from '../DTOs/user.dto';
 import { userService } from '../services/user.service';
 import { logger } from '../config/logger';
@@ -23,8 +23,7 @@ export const userController = {
             });
         } catch (error) {
             logger.error(
-                `Admin (ID: ${res.locals.user.id}) failed to create user: ${
-                    (error as Error).message
+                `Admin (ID: ${res.locals.user.id}) failed to create user: ${(error as Error).message
                 }`
             );
             return res.status(400).json({
@@ -54,8 +53,7 @@ export const userController = {
             });
         } catch (error) {
             logger.error(
-                `Admin (ID: ${res.locals.user.id}) failed to retrieve user: ${
-                    (error as Error).message
+                `Admin (ID: ${res.locals.user.id}) failed to retrieve user: ${(error as Error).message
                 }`
             );
             return res.status(400).json({
@@ -91,8 +89,7 @@ export const userController = {
             });
         } catch (error) {
             logger.error(
-                `Admin (ID: ${res.locals.user.id}) failed to update user: ${
-                    (error as Error).message
+                `Admin (ID: ${res.locals.user.id}) failed to update user: ${(error as Error).message
                 }`
             );
             return res.status(400).json({
@@ -123,15 +120,14 @@ export const userController = {
             });
         } catch (error) {
             logger.error(
-                `Admin (ID: ${res.locals.user.id}) failed to delete user: ${
-                    (error as Error).message
+                `Admin (ID: ${res.locals.user.id}) failed to delete user: ${(error as Error).message
                 }`
             );
             return res.status(400).json({
                 message: 'Error deleting user: ' + (error as Error).message,
                 error: true,
             });
-            
+
         }
     },
 
@@ -145,8 +141,7 @@ export const userController = {
             });
         } catch (error) {
             logger.error(
-                `Admin (ID: ${res.locals.user.id}) failed to retrieve users: ${
-                    (error as Error).message
+                `Admin (ID: ${res.locals.user.id}) failed to retrieve users: ${(error as Error).message
                 }`
             );
             return res.status(500).json({

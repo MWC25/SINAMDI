@@ -127,7 +127,7 @@ router.post(
 );
 
 router.get(
-    '/user/:userId',
+    '/user/get/:userId',
     authorization,
     authorizeRoles(Role.ADMIN),
     (req: Request, res: Response) => {
@@ -136,7 +136,7 @@ router.get(
 );
 
 router.put(
-    '/user/:userId',
+    '/user/update/:userId',
     authorization,
     authorizeRoles(Role.ADMIN),
     (req: Request, res: Response) => {
@@ -145,7 +145,7 @@ router.put(
 );
 
 router.get(
-    '/users/all',
+    '/user/all',
     authorization,
     authorizeRoles(Role.ADMIN),
     (req: Request, res: Response) => {
@@ -154,7 +154,7 @@ router.get(
 );
 
 router.delete(
-    '/user/:userId',
+    '/user/delete/:userId',
     authorization,
     authorizeRoles(Role.ADMIN),
     (req: Request, res: Response) => {
