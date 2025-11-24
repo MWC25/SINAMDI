@@ -1,5 +1,6 @@
 import { patientRepository } from '../repositories/patients.repository';
 import { PatientDTOType } from '../DTOs/patient.dto';
+import { createHttpError, ErrorTypes } from '../util/error/error';
 
 export const patientService = {
     async create(data: PatientDTOType) {
@@ -13,7 +14,7 @@ export const patientService = {
     async getById(id: string) {
         const patient = await patientRepository.findById(id);
         if (!patient) {
-            throw new Error('Patient not found');
+            throw createHttpError(ErrorTypes.NOT_FOUND, 'Patient not found');
         }
         return patient;
     },

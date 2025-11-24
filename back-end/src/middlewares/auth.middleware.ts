@@ -1,26 +1,33 @@
 import { NextFunction, Request, Response } from "express";
 import { JWTProvider } from "../config/JWTProvider";
-import { logger } from "../config/logger";
 import { roleRepository } from "../repositories/role.repository";
+import { createHttpError, ErrorTypes } from "../util/error/error";
 
 export async function authorization(req: Request, res: Response, next: NextFunction) {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-        return res.status(401).json({
-            error: true,
-            message: 'Token not provided.',
-        });
-    }
-
-    const token = authHeader.split(' ')[1];
-
     try {
-        const decoded = JWTProvider.verifyToken(token!);
-        
+         const authHeader = req.headers.authorization;
+
+         if (!authHeader) {
+            return next(createHttpError(
+                 ErrorTypes.UNAUTHORIZED,
+                 'Authorization header missing.'
+             ));
+         }
+
+        const token = authHeader.split(' ')[1];
+
+        if (!token) {
+             return next(
+                 createHttpError(
+                     ErrorTypes.UNAUTHORIZED,
+                     'Bearer token missing.'
+                 )
+             );
+         }
+        const decoded = JWTProvider.verifyToken(token);
         
         if (!decoded || !decoded.id) {
-            throw new Error('Invalid token payload.');
+            return next(createHttpError(ErrorTypes.UNAUTHORIZED, 'Invalid token.'));
         }
 
         const userRole = await roleRepository.getRoleByUserId(decoded.id);
@@ -29,10 +36,6 @@ export async function authorization(req: Request, res: Response, next: NextFunct
 
         return next();
     } catch (error: any) {
-        logger.error(`Authorization Middleware Error: ${error.message}`);
-         return res.status(401).json({
-             error: true,
-             message: 'Invalid token.',
-         });
+        return next(error);
     }
 }

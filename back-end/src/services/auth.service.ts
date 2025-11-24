@@ -3,6 +3,8 @@ import { userRepository } from "../repositories/user.repository"
 import { verifyPassword } from "../util/cryptPassword";
 import 'dotenv/config'
 import { JWTProvider } from "../config/JWTProvider";
+import { createHttpError, ErrorTypes } from "../util/error/error";
+
 
 export const authService = {
     async authenticate(req: Request, res: Response){
@@ -12,23 +14,15 @@ export const authService = {
         const user = await userRepository.getUserByUserName(username)
 
         if (!user){
-            return res.status(401).json({
-                message: "Invalid Credentials"
-            })
+            throw createHttpError(ErrorTypes.UNAUTHORIZED, 'Invalid Credentials');
         }
 
         if (await verifyPassword(password, user.passwordHash) === false){
-            return res.status(401).json({
-                message: 'Invalid Credentials',
-            });
+            throw createHttpError(ErrorTypes.UNAUTHORIZED, 'Invalid Credentials');
         }
 
         const token = JWTProvider.generateToken(user.id);
 
-        return res.status(200).json({
-                message: 'Login successful',
-                accessToken: token,
-                user: user,
-            });
+        return { token, user };
     }
 }

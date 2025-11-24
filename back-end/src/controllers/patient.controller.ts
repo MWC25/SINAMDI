@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { patientService } from '../services/patient.service';
 import { patientDTO } from '../DTOs/patient.dto';
-import { logger } from '../config/logger';
+import { createHttpError, ErrorTypes } from '../util/error/error';
 
 export const patientController = {
-    async create(req: Request, res: Response) {
+    async create(req: Request, res: Response, next: NextFunction) {
         try {
             const data = patientDTO.buildCreatePatientDto(req.body);
             const newPatient = await patientService.create(data);
@@ -14,87 +14,67 @@ export const patientController = {
                 patient: newPatient
             });
         } catch (error) {
-            logger.error(`Error creating patient: ${(error as Error).message}`);
-            return res.status(400).json({
-                message: 'Error creating patient: ' + (error as Error).message,
-                error: true
-            });
+            return next(error);
         }
     },
 
-    async getAll(req: Request, res: Response) {
+    async getAll(req: Request, res: Response, next: NextFunction) {
         try {
             const patients = await patientService.getAll();
             return res.status(200).json({
                 message: 'Patients retrieved successfully',
-                patients
+                patients,
             });
         } catch (error) {
-            logger.error(`Error retrieving patients: ${(error as Error).message}`);
-            return res.status(500).json({
-                message: 'Error retrieving patients: ' + (error as Error).message,
-                error: true
-            });
+            return next(error);
         }
     },
 
-    async getById(req: Request, res: Response) {
+    async getById(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
             if (!id) {
-                return res.status(400).json({ message: 'ID is required', error: true });
+                return next(createHttpError(ErrorTypes.BAD_REQUEST, 'ID is required'));
             }
             const patient = await patientService.getById(id);
             return res.status(200).json({
                 message: 'Patient retrieved successfully',
-                patient
+                patient,
             });
         } catch (error) {
-            logger.error(`Error retrieving patient: ${(error as Error).message}`);
-            return res.status(404).json({
-                message: 'Error retrieving patient: ' + (error as Error).message,
-                error: true
-            });
+            return next(error);
         }
     },
 
-    async update(req: Request, res: Response) {
+    async update(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
             if (!id) {
-                return res.status(400).json({ message: 'ID is required', error: true });
+                return next(createHttpError(ErrorTypes.BAD_REQUEST, 'ID is required'));
             }
             const data = patientDTO.buildUpdatePatientDto(req.body);
             const updatedPatient = await patientService.update(id, data);
             return res.status(200).json({
                 message: 'Patient updated successfully',
-                patient: updatedPatient
+                patient: updatedPatient,
             });
         } catch (error) {
-            logger.error(`Error updating patient: ${(error as Error).message}`);
-            return res.status(400).json({
-                message: 'Error updating patient: ' + (error as Error).message,
-                error: true
-            });
+            return next(error);
         }
     },
 
-    async delete(req: Request, res: Response) {
+    async delete(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
             if (!id) {
-                return res.status(400).json({ message: 'ID is required', error: true });
+                return next(createHttpError(ErrorTypes.BAD_REQUEST, 'ID is required'));
             }
             await patientService.delete(id);
             return res.status(200).json({
-                message: 'Patient deleted successfully'
+                message: 'Patient deleted successfully',
             });
         } catch (error) {
-            logger.error(`Error deleting patient: ${(error as Error).message}`);
-            return res.status(400).json({
-                message: 'Error deleting patient: ' + (error as Error).message,
-                error: true
-            });
+            return next(error);
         }
     }
 };

@@ -1,4 +1,4 @@
-import { Request, Response, Router } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import { authorization } from '../middlewares/auth.middleware';
 import { userController } from '../controllers/user.controller';
 import { authorizeRoles } from '../middlewares/authorizeRoles.midleware';
@@ -121,8 +121,8 @@ router.post(
     '/user/create',
     authorization,
     authorizeRoles(Role.ADMIN),
-    (req: Request, res: Response) => {
-        return userController.create(req, res);
+    (req: Request, res: Response, next: NextFunction) => {
+        return userController.create(req, res, next);
     }
 );
 
@@ -130,8 +130,8 @@ router.get(
     '/user/get/:userId',
     authorization,
     authorizeRoles(Role.ADMIN),
-    (req: Request, res: Response) => {
-        return userController.getUserById(req, res);
+    (req: Request, res: Response, next:NextFunction) => {
+        return userController.getUserById(req, res, next);
     }
 );
 
@@ -139,8 +139,8 @@ router.put(
     '/user/update/:userId',
     authorization,
     authorizeRoles(Role.ADMIN),
-    (req: Request, res: Response) => {
-        return userController.updateUser(req, res);
+    (req: Request, res: Response, next:NextFunction) => {
+        return userController.updateUser(req, res, next);
     }
 );
 
@@ -148,8 +148,8 @@ router.get(
     '/user/all',
     authorization,
     authorizeRoles(Role.ADMIN),
-    (req: Request, res: Response) => {
-        return userController.getAllUsers(req, res);
+    (req: Request, res: Response, next:NextFunction) => {
+        return userController.getAllUsers(req, res, next);
     }
 );
 
@@ -157,8 +157,8 @@ router.delete(
     '/user/delete/:userId',
     authorization,
     authorizeRoles(Role.ADMIN),
-    (req: Request, res: Response) => {
-        return userController.deleteUser(req, res);
+    (req: Request, res: Response, next:NextFunction) => {
+        return userController.deleteUser(req, res, next);
     }
 );
 

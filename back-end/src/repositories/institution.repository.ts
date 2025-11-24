@@ -37,7 +37,6 @@ export const institutionRepository = {
                 address: true,
             },
         });
-        console.log('Repository: Fetched institutions:', institutions);
         return institutions;
     },
 

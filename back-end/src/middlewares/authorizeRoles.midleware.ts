@@ -1,19 +1,19 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from 'express';
+import { createHttpError, ErrorTypes } from '../util/error/error';
 
 export function authorizeRoles(...roles: string[]) {
-
-    return (req: Request, res: Response, next: NextFunction) =>{
-
+    return (req: Request, res: Response, next: NextFunction) => {
         const userRole = res.locals.user?.role;
 
         if (!roles.includes(userRole)) {
-            return res.status(403).json({
-                error: true,
-                message: 'Forbidden: You do not have the required permissions to access this resource.',
-            });
+            return next(
+                createHttpError(
+                    ErrorTypes.FORBIDDEN,
+                    'Access denied: insufficient permissions.'
+                )
+            );
         }
 
         return next();
-    }
-    
+    };
 }

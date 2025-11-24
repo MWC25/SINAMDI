@@ -1,11 +1,12 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import { userDTO, UserDTOType } from '../DTOs/user.dto';
 import { userService } from '../services/user.service';
 import { logger } from '../config/logger';
+import { createHttpError, ErrorTypes } from '../util/error/error';
 
 export const userController = {
-    async create(req: Request, res: Response) {
+    async create(req: Request, res: Response, next: NextFunction) {
         try {
             const newUserData: UserDTOType = userDTO.buildCreateUserDto(
                 req.body
@@ -18,31 +19,21 @@ export const userController = {
             );
 
             return res.status(201).json({
-                message: 'User create sucessfully',
+                message: 'User created successfully',
                 user: newUser,
             });
         } catch (error) {
-            logger.error(
-                `Admin (ID: ${res.locals.user.id}) failed to create user: ${(error as Error).message
-                }`
-            );
-            return res.status(400).json({
-                message: 'Error creating user: ' + (error as Error).message,
-                error: true,
-            });
+            return next(error);
         }
     },
 
-    async getUserById(req: Request, res: Response) {
+    async getUserById(req: Request, res: Response, next: NextFunction) {
 
         try {
             const userId = req.params.userId;
 
             if (!userId) {
-                return res.status(400).json({
-                    message: 'User ID is required.',
-                    error: true,
-                });
+                return next(createHttpError(ErrorTypes.BAD_REQUEST, 'User ID is required.'));
             }
 
             const newUser = await userService.getUserById(userId);
@@ -52,27 +43,17 @@ export const userController = {
                 user: newUser,
             });
         } catch (error) {
-            logger.error(
-                `Admin (ID: ${res.locals.user.id}) failed to retrieve user: ${(error as Error).message
-                }`
-            );
-            return res.status(400).json({
-                message: 'Error retrieving user: ' + (error as Error).message,
-                error: true,
-            });
+            return next(error);
         }
     },
 
-    async updateUser(req: Request, res: Response) {
+    async updateUser(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req.params.userId;
             const updatedUserData = req.body;
 
             if (!userId) {
-                return res.status(400).json({
-                    message: 'User ID is required.',
-                    error: true,
-                });
+                return next(createHttpError(ErrorTypes.BAD_REQUEST, 'User ID is required.'));
             }
 
             const updateUser = await userService.updateUser(
@@ -88,26 +69,16 @@ export const userController = {
                 user: updateUser,
             });
         } catch (error) {
-            logger.error(
-                `Admin (ID: ${res.locals.user.id}) failed to update user: ${(error as Error).message
-                }`
-            );
-            return res.status(400).json({
-                message: 'Error updating user: ' + (error as Error).message,
-                error: true,
-            });
+            return next(error);
         }
     },
 
-    async deleteUser(req: Request, res: Response) {
+    async deleteUser(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req.params.userId;
 
             if (!userId) {
-                return res.status(400).json({
-                    message: 'User ID is required.',
-                    error: true,
-                });
+                return next(createHttpError(ErrorTypes.BAD_REQUEST, 'User ID is required.'));
             }
 
             await userService.deleteUser(userId);
@@ -119,19 +90,11 @@ export const userController = {
                 message: 'User deleted successfully.',
             });
         } catch (error) {
-            logger.error(
-                `Admin (ID: ${res.locals.user.id}) failed to delete user: ${(error as Error).message
-                }`
-            );
-            return res.status(400).json({
-                message: 'Error deleting user: ' + (error as Error).message,
-                error: true,
-            });
-
+            return next(error);
         }
     },
 
-    async getAllUsers(req: Request, res: Response) {
+    async getAllUsers(req: Request, res: Response, next: NextFunction) {
         try {
             const users = await userService.getAllUsers();
 
@@ -140,14 +103,7 @@ export const userController = {
                 users: users,
             });
         } catch (error) {
-            logger.error(
-                `Admin (ID: ${res.locals.user.id}) failed to retrieve users: ${(error as Error).message
-                }`
-            );
-            return res.status(500).json({
-                message: 'Error retrieving users: ' + (error as Error).message,
-                error: true,
-            });
+            return next(error);
         }
     },
 };

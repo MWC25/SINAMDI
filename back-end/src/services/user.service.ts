@@ -3,6 +3,7 @@ import { Role, User } from '../generated/prisma/client';
 import { institutionRepository } from '../repositories/institution.repository';
 import { userRepository } from '../repositories/user.repository';
 import { hashPassword } from '../util/cryptPassword';
+import { createHttpError, ErrorTypes } from '../util/error/error';
 import { generateRegistration } from '../util/generateResitration';
 
 export const userService = {
@@ -15,7 +16,7 @@ export const userService = {
         );
 
         if (userExists) {
-            throw new Error('Username already taken.');
+            throw createHttpError(ErrorTypes.BAD_REQUEST, 'Username already taken.');
         }
 
         if (userData.institutionName !== undefined) {
@@ -25,7 +26,7 @@ export const userService = {
                 );
 
             if (!institution) {
-                throw new Error('Institution not found.');
+                throw createHttpError(ErrorTypes.NOT_FOUND, 'Institution not found.');
             }
 
             const newUser = await userRepository.createUserWithInstitution({
@@ -51,7 +52,7 @@ export const userService = {
         const user = await userRepository.getUserById(userId);
 
         if (!user) {
-            throw new Error('User not found.');
+            throw createHttpError(ErrorTypes.NOT_FOUND, 'User not found.');
         }
         return user;
     },
@@ -68,7 +69,7 @@ export const userService = {
     ): Promise<User> {
         const user = await userRepository.getUserById(userId);
         if (!user) {
-            throw new Error('User not found.');
+            throw createHttpError(ErrorTypes.NOT_FOUND, 'User not found.');
         }
 
         const updateData: any = {};
@@ -85,7 +86,7 @@ export const userService = {
                     userData.institutionName
                 );
             if (!institution) {
-                throw new Error('Institution not found.');
+                throw createHttpError(ErrorTypes.NOT_FOUND, 'Institution not found.');
             }
             updateData.institutionId = institution.id;
         }
@@ -94,7 +95,7 @@ export const userService = {
 
             const role = userData.role.trim().toUpperCase();
             if (!(role in Role)) {
-                throw new Error('Invalid role');
+                throw createHttpError(ErrorTypes.BAD_REQUEST, 'Invalid role.');
             }
             updateData.role = role;
         }
@@ -113,7 +114,7 @@ export const userService = {
     async deleteUser(userId: string): Promise<void> {
         const user = await userRepository.getUserById(userId);
         if (!user) {
-            throw new Error('User not found.');
+            throw createHttpError(ErrorTypes.NOT_FOUND, 'User not found.');
         }
 
         await userRepository.deleteUser(userId);
