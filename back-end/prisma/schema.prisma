@@ -95,7 +95,7 @@ model Patient {
     phone String @db.VarChar(11)
     email String @unique
     lastCollectionAt DateTime?
-    patientStatus PatientStatus @default(ATIVO)
+    patientStatus PatientStatus @default(ACTIVE)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     birthDate DateTime
@@ -214,14 +214,14 @@ enum AgeRange {
 }
 
 enum CollectChannel {
-    PRESENCIAL
+    PRESENTIAL
     ONLINE
 }
 
 enum CollectRisk {
-    BAIXO
-    MEDIO
-    ALTO
+    LOW
+    MEDIUM
+    HIGH
 }
 
 enum Role {
@@ -241,23 +241,23 @@ enum InstitutionType {
 }
 
 enum PatientStatus {
-    ATIVO
-    INATIVO
-    SUSPENSO
+    ACTIVE
+    INACTIVE
+    SUSPENDED
 }
 
 enum Gender {
-  MASCULINO
-  FEMININO
-  OUTRO
-  NAO_INFORMADO
+    MALE
+    FEMALE
+    OTHER
 }
 
 enum Schooling {
-  FUNDAMENTAL
-  MEDIO
-  TECNICO
-  SUPERIOR
-  POS
-  NAO_INFORMADO
+    NO_FORMAL
+    PRE
+    FUNDAMENTAL
+    MEDIUM
+    BACHELOR
+    MASTER
+    DOCTORATE
 }
