@@ -99,5 +99,14 @@ export const patientRepository = {
         });
 
         return await prisma.$transaction([deleteAddress, deletePatient]);
+    },
+
+    async findByCPF(cpf: string) {
+        return await prisma.patient.findUnique({
+            where: { cpf },
+            include: {
+                address: true,
+            },
+        });
     }
 };
