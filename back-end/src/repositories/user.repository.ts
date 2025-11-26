@@ -72,6 +72,9 @@ export const userRepository = {
                 username: true,
                 registration: true,
                 role: true,
+                isActive: true,
+                createdAt: true,
+                lastLogin: true,
                 institution: {
                     select: {
                         name: true,

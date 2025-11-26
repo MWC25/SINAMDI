@@ -39,4 +39,8 @@ router.post('/auth/login', (req: Request, res: Response, next) => {
     return authController.login(req, res, next);
 });
 
+router.post('/auth/logout', (req: Request, res: Response, next) => {
+    return authController.logout(req, res, next);
+});
+
 export default router;

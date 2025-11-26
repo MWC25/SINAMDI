@@ -9,17 +9,6 @@ export async function authorization(
     next: NextFunction
 ) {
     try {
-        const authHeader = req.headers.authorization;
-
-        if (!authHeader) {
-            return next(
-                createHttpError(
-                    ErrorTypes.UNAUTHORIZED,
-                    'Authorization header missing.'
-                )
-            );
-        }
-
         const token = req.signedCookies.authToken || req.cookies.authToken 
 
         if (!token) {

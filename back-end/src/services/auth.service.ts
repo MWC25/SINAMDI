@@ -37,4 +37,15 @@ export const authService = {
 
         return { token, user };
     },
+
+    async logout(req: Request, res: Response) {
+        res.clearCookie('authToken', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+        });
+
+        return true;
+    }
 };

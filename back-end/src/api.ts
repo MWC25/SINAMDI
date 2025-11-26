@@ -10,6 +10,7 @@ const api: express.Application = express();
 api.use(
     cors({
         origin: 'http://localhost:3000', // seu front (Next)
+        credentials: true,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
     })
