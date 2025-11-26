@@ -33,8 +33,12 @@ RUN pnpm install --frozen-lockfile --prod
 # artefatos do build
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.* ./ || true
+# se o arquivo for .ts:
+COPY --from=builder /app/next.config.ts ./next.config.ts
+# se no teu projeto for .js ou .mjs, troca o nome aqui em cima
+
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
+
 
 # Next usa 3000 e respeita PORT
 ENV PORT=3000
