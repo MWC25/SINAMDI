@@ -20,7 +20,7 @@ export const institutionDTO = {
             throw new Error("Invalid data: name, type and address are required.");
         }
 
-        if(data.type.trim().toUpperCase() !in InstitutionType){
+        if(data.type.trim() !in InstitutionType){
             throw new Error("Invalid institution type.");
         }
 

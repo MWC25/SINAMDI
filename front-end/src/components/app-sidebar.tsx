@@ -2,9 +2,13 @@
 
 import * as React from 'react';
 import {
+    Brain,
     ChartNoAxesCombined,
+    ClipboardPlus,
+    Landmark,
     LayoutDashboardIcon,
     SettingsIcon,
+    UserRoundPen,
 } from 'lucide-react';
 
 import { NavMain } from '@/components/nav-main';
@@ -38,7 +42,22 @@ const data = {
         {
             title: 'Gerenciamento de usuários',
             url: '/dashboard/users',
-            icon: ChartNoAxesCombined,
+            icon: UserRoundPen,
+        },
+        {
+            title: 'Gerenciamento de Instituições',
+            url: '/dashboard/institutions',
+            icon: Landmark,
+        },
+        {
+            title: 'Gerenciamento de Pacientes',
+            url: '/dashboard/patients',
+            icon: Brain,
+        },
+        {
+            title: 'Gerenciamento de Coletas',
+            url: '/dashboard/collections',
+            icon: ClipboardPlus,
         },
     ],
 
