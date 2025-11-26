@@ -7,7 +7,7 @@
         "target": "es2020",
         "moduleResolution": "node16",
         "types": ["node"],
-        "ignoreDeprecations": "6.0",
+        
 
         "sourceMap": true,
         "declaration": true,
