@@ -16,7 +16,10 @@ RUN pnpm install --frozen-lockfile
 
 # 4) Copiar schema do Prisma e gerar client
 COPY prisma ./prisma
-RUN pnpx prisma generate
+
+# usa o Prisma que já está no node_modules (6.19.0)
+RUN pnpm exec prisma generate
+
 
 # 5) Copiar código fonte
 COPY . .
