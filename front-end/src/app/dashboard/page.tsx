@@ -1,8 +1,17 @@
 import data from './data.json';
 import CardDashboard from '@/components/card-dashboard';
 import { Separator } from '@/components/ui/separator';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+
+    const cookiesStore = await cookies();
+
+    if (!cookiesStore.get('authToken')) {
+        redirect('/auth/login');
+    }
+
     const base = data.sinamdi_dashboard;
 
     const centralIndicators = [

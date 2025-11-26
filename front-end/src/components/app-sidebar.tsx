@@ -35,6 +35,11 @@ const data = {
             url: '/dashboard/graphics',
             icon: ChartNoAxesCombined,
         },
+        {
+            title: 'Gerenciamento de usuários',
+            url: '/dashboard/users',
+            icon: ChartNoAxesCombined,
+        },
     ],
 
     navSecondary: [
