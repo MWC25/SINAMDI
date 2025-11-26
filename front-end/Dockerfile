@@ -40,8 +40,5 @@ COPY --from=builder /app/next.config.ts ./next.config.ts
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 
 
-# Next usa 3000 e respeita PORT
-ENV PORT=3000
-EXPOSE 3000
 
 CMD ["pnpm", "start"]
