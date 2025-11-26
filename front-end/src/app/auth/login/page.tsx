@@ -1,6 +1,6 @@
 import { LoginForm } from "@/components/login-form";
 
-export default function Login({
+export default async function Login({
   children,
 }:{
   children: React.ReactNode;
