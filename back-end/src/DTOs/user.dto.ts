@@ -1,4 +1,5 @@
 import { Role } from '../generated/prisma/enums';
+import { createHttpError, ErrorTypes } from '../util/error/error';
 
 export type UserDTOType = {
     username: string;
@@ -10,7 +11,7 @@ export type UserDTOType = {
 export const userDTO = {
     buildCreateUserDto(data: any): UserDTOType {
         if (!data.username || !data.password) {
-            throw createHttpError(
+            throw createHttpError(ErrorTypes.BAD_REQUEST,
                 'Invalid data: username and password are required.'
             );
         }

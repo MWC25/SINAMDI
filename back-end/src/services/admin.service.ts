@@ -2,6 +2,7 @@ import { userDTO } from '../DTOs/user.dto';
 import { Role, User } from '../generated/prisma/client';
 import { AdminRepository } from '../repositories/admin.repository';
 import { hashPassword } from '../util/cryptPassword';
+import { createHttpError, ErrorTypes } from '../util/error/error';
 import { generateRegistration } from '../util/generateResitration';
 
 export const AdminService = {
@@ -19,7 +20,7 @@ export const AdminService = {
 
             return newAdmin;
         } catch (error: any) {
-            throw createHttpError(
+            throw createHttpError( ErrorTypes.INTERNAL,
                 `Failed to create admin user: ${error.message}`
             );
         }
