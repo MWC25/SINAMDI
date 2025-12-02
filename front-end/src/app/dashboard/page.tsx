@@ -116,14 +116,21 @@ export default async function DashboardPage() {
         throw new Error('Falha ao carregar dados do dashboard');
     }
 
+    const unavailableContent = (
+        <div className="w-full h-full px-6 py-4">
+            <h2 className="text-xl text-gray-600 font-semibold">
+                Dados indisponíveis
+            </h2>
+        </div>
+    );
+
     if (!dashboard) {
-        return (
-            <div className="w-full h-full px-6 py-4">
-                <h2 className="text-xl text-gray-600 font-semibold">
-                    Dados indisponíveis
-                </h2>
-            </div>
-        );
+        return unavailableContent;
+    }
+
+    if (!dashboard.cards || !dashboard.charts) {
+        console.error('Dashboard payload incompleto', dashboard);
+        return unavailableContent;
     }
 
     const { cards, charts } = dashboard;

@@ -13,13 +13,18 @@ export const client = axios.create({
 });
 
 client.interceptors.response.use(
-    response => {
-        return response;
-    },
-    error => {
-        if (error.response && error.response.status === 401) {
-            window.location.href = '/auth/login';
-        }
-        return error;
+  response => {
+    return response;
+  },
+  error => {
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      typeof window !== 'undefined'
+    ) {
+      window.location.href = '/auth/login';
     }
+
+    return Promise.reject(error);
+  }
 );
