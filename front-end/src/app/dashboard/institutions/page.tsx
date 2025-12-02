@@ -394,7 +394,7 @@ function CreateInstitutionDialog({
         setOpen(false);
         setForm({
             name: '',
-            type: 'SCHOOL',
+            type: 'DEVs',
             city: '',
             state: 'PE',
             street: '',
@@ -408,7 +408,7 @@ function CreateInstitutionDialog({
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button disabled>
+                <Button>
                     <Plus className="mr-2 h-4 w-4" />
                     New institution
                 </Button>
@@ -434,28 +434,6 @@ function CreateInstitutionDialog({
                     </div>
 
                     <div className="grid gap-4 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <Label>Type</Label>
-                            <Select
-                                value={form.type}
-                                onValueChange={value =>
-                                    setForm(prev => ({
-                                        ...prev,
-                                        type: value as InstitutionType,
-                                    }))
-                                }>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {INSTITUTION_TYPES.map(t => (
-                                        <SelectItem key={t} value={t}>
-                                            {INSTITUTION_TYPE_LABELS[t]}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
 
                         <div className="space-y-2">
                             <Label>State</Label>
