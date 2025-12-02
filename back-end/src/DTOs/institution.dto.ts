@@ -1,4 +1,5 @@
 import { InstitutionType, State } from "../generated/prisma/enums";
+import { createHttpError, ErrorTypes } from "../util/error/error";
 
 export interface InstitutionDTOType {
     name: string;
@@ -17,16 +18,16 @@ export interface InstitutionDTOType {
 export const institutionDTO = {
     buildInstitutionDto(data: any): InstitutionDTOType {
         if (!data.name || !data.type || !data.address) {
-            throw new Error("Invalid data: name, type and address are required.");
+            throw createHttpError(ErrorTypes.BAD_REQUEST,"Invalid data: name, type and address are required.");
         }
 
-        if(data.type.trim() !in InstitutionType){
-            throw new Error("Invalid institution type.");
+        if((data.type.trim() in InstitutionType) === false) {
+            throw createHttpError(ErrorTypes.BAD_REQUEST,"Invalid institution type.");
         }
 
         if (!data.address.street || !data.address.number || !data.address.neighborhood ||
             !data.address.city || !data.address.state || !data.address.zipCode) {
-            throw new Error("Invalid address data: all address fields are required.");
+            throw createHttpError(ErrorTypes.BAD_REQUEST,"Invalid address data: all address fields are required.");
         }
 
         if (data.address.complement === undefined) {
@@ -34,11 +35,11 @@ export const institutionDTO = {
         }
 
         if (isNaN(data.address.number)) {
-            throw new Error("Invalid address number: must be a number.");
+            throw createHttpError(ErrorTypes.BAD_REQUEST,"Invalid address number: must be a number.");
         }
 
         if (data.address.zipCode.toString().length > 8) {
-            throw new Error("Invalid zip code: length exceeds limit.");
+            throw createHttpError(ErrorTypes.BAD_REQUEST,"Invalid zip code: length exceeds limit.");
         }
 
         return {

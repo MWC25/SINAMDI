@@ -1,11 +1,11 @@
-import { userDTO } from "../DTOs/user.dto"
-import { Role, User } from "../generated/prisma/client";
-import { AdminRepository } from "../repositories/admin.repository";
-import { hashPassword } from "../util/cryptPassword";
-import { generateRegistration } from "../util/generateResitration";
+import { userDTO } from '../DTOs/user.dto';
+import { Role, User } from '../generated/prisma/client';
+import { AdminRepository } from '../repositories/admin.repository';
+import { hashPassword } from '../util/cryptPassword';
+import { generateRegistration } from '../util/generateResitration';
 
 export const AdminService = {
-    async createAdminUser(data: any): Promise<User>  {
+    async createAdminUser(data: any): Promise<User> {
         try {
             const dto = userDTO.buildCreateUserDto(data);
             const hashedPassword = await hashPassword(dto.password);
@@ -15,13 +15,13 @@ export const AdminService = {
                 passwordHash: hashedPassword,
                 registration: generateRegistration(),
                 role: Role.ADMIN,
-                
-
             });
 
             return newAdmin;
         } catch (error: any) {
-            throw new Error(`Failed to create admin user: ${error.message}`);
+            throw createHttpError(
+                `Failed to create admin user: ${error.message}`
+            );
         }
-    }
-}
+    },
+};

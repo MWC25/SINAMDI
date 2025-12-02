@@ -1,6 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 import 'dotenv/config';
 import { JWTSECRET } from './env';
+import { createHttpError, ErrorTypes } from '../util/error/error';
 
 interface JwtPayload {
     id: string;
@@ -8,14 +9,15 @@ interface JwtPayload {
     exp?: number;
 }
 
-
 export const JWTProvider = {
     generateToken(
         userId: string,
         expiresIn?: jwt.SignOptions['expiresIn']
     ): string {
         if (!JWTSECRET) {
-            throw new Error('Server configuration error: JWT secret not set');
+            throw createHttpError(ErrorTypes.INTERNAL,
+                'Server configuration error: JWT secret not set'
+            );
         }
 
         return jwt.sign({ id: userId }, JWTSECRET, {
@@ -25,14 +27,18 @@ export const JWTProvider = {
 
     verifyToken(token: string): JwtPayload {
         if (!JWTSECRET) {
-            throw new Error('Server configuration error: JWT secret not set');
+            throw createHttpError(ErrorTypes.INTERNAL,
+                'Server configuration error: JWT secret not set'
+            );
         }
 
         try {
             const decoded = jwt.verify(token, JWTSECRET) as JwtPayload;
             return decoded;
         } catch (err) {
-            throw new Error('Invalid token');
+            throw createHttpError(ErrorTypes.UNAUTHORIZED,
+                'Invalid token: ' + (err instanceof Error ? err.message : 'Unknown error')
+            );
         }
     },
 };
