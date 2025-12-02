@@ -92,7 +92,7 @@ export default async function DashboardPage() {
         .map(c => `${c.name}=${c.value}`)
         .join('; ');
 
-    let dashboard: DashboardOverviewResponse;
+    let dashboard: DashboardOverviewResponse | undefined;
 
     try {
         const res = await client.get<DashboardOverviewResponse>(
@@ -114,6 +114,16 @@ export default async function DashboardPage() {
 
         console.error('Erro ao carregar dashboard:', error);
         throw new Error('Falha ao carregar dados do dashboard');
+    }
+
+    if (!dashboard) {
+        return (
+            <div className="w-full h-full px-6 py-4">
+                <h2 className="text-xl text-gray-600 font-semibold">
+                    Dados indisponíveis
+                </h2>
+            </div>
+        );
     }
 
     const { cards, charts } = dashboard;
