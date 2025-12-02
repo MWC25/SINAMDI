@@ -11,3 +11,15 @@ export const client = axios.create({
   },
   withCredentials: true,
 });
+
+client.interceptors.response.use(
+    response => {
+        return response;
+    },
+    error => {
+        if (error.response && error.response.status === 401) {
+            window.location.href = '/auth/login';
+        }
+        return error;
+    }
+);

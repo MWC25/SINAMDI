@@ -7,6 +7,7 @@ import {
     ClipboardPlus,
     Landmark,
     LayoutDashboardIcon,
+    LogOut,
     SettingsIcon,
     UserRoundPen,
 } from 'lucide-react';
@@ -63,9 +64,8 @@ const data = {
 
     navSecondary: [
         {
-            title: 'Settings',
-            url: '/settings',
-            icon: SettingsIcon,
+            title: 'Sair',
+            icon: LogOut,
         },
     ],
 };
@@ -90,9 +90,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <NavMain items={data.navMain} />
                 <NavSecondary items={data.navSecondary} className="mt-auto" />
             </SidebarContent>
-            <SidebarFooter>
+            {/* <SidebarFooter>
                 <NavUser user={data.user} />
-            </SidebarFooter>
+            </SidebarFooter> */}
         </Sidebar>
     );
 }

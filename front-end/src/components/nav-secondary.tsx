@@ -11,6 +11,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
+import { Button } from "./ui/button"
+import { logoutService } from "@/services/login.service"
 
 export function NavSecondary({
   items,
@@ -18,7 +20,6 @@ export function NavSecondary({
 }: {
   items: {
     title: string
-    url: string
     icon: LucideIcon
   }[]
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
@@ -29,10 +30,10 @@ export function NavSecondary({
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild>
-                <Link href={item.url}>
+                <Button onClick={()=>{logoutService(), window.location.reload()}} variant="ghost" className="w-full justify-start">
                   <item.icon />
                   <span>{item.title}</span>
-                </Link>
+                </Button>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

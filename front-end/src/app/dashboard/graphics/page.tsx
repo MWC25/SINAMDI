@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import data from '../data.json';
 import {
     Card,
     CardContent,
@@ -9,11 +8,7 @@ import {
     CardTitle,
     CardDescription,
 } from '@/components/ui/card';
-import {
-    ChartContainer,
-    ChartTooltip,
-    ChartLegendContent,
-} from '@/components/ui/chart';
+import { ChartContainer, ChartTooltip } from '@/components/ui/chart';
 import {
     AreaChart,
     Area,
@@ -25,39 +20,193 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from 'recharts';
+import { client } from '@/services/axios.config';
+
+// mesmo tipo que usamos no DashboardPage (pode extrair isso pra um arquivo types depois)
+type DashboardOverviewResponse = {
+    period: {
+        current: { startDate: string; endDate: string };
+        previous: { startDate: string; endDate: string };
+    };
+    cards: {
+        totalCollects: {
+            current: number;
+            previous: number;
+            variationPercent: number | null;
+        };
+        highRiskShare: {
+            currentPercent: number;
+            previousPercent: number;
+            variationPoints: number | null;
+        };
+        avgRiskScore: {
+            current: number;
+            previous: number;
+            variationAbs: number | null;
+            variationPercent: number | null;
+        };
+    };
+    charts: {
+        byAgeRange: Array<{
+            ageRange: string;
+            count: number;
+            proportion: number;
+            percent: number;
+        }>;
+        byState: Array<{
+            state: string;
+            count: number;
+            proportion: number;
+            percent: number;
+        }>;
+        byRiskLevel: Array<{
+            riskLevel: string;
+            count: number;
+            proportion: number;
+            percent: number;
+        }>;
+        timeSeriesDaily: Array<{
+            date: string;
+            count: number;
+            mm7: number | null;
+        }>;
+        monthlyTotals: Array<{
+            year: number;
+            month: number;
+            total: number;
+            previousTotal: number | null;
+            varPercent: number | null;
+        }>;
+        ratePer100kByState: Array<{
+            state: string;
+            count: number;
+            population: number | null;
+            ratePer100k: number | null;
+        }>;
+        avgRiskScoreByState: Array<{
+            state: string;
+            avgRiskScore: number;
+        }>;
+        highRiskByAgeRange: Array<{
+            ageRange: string;
+            total: number;
+            highRisk: number;
+            proportion: number;
+            percent: number;
+        }>;
+    };
+};
+
+function formatMonthLabel(year: number, month: number) {
+    const padded = String(month).padStart(2, '0');
+    return `${padded}/${year}`;
+}
+
+function formatAgeRangeLabel(ageRange: string) {
+    const map: Record<string, string> = {
+        AGE_6a11: '6–11',
+        AGE_12a14: '12–14',
+        AGE_15a17: '15–17',
+        AGE_18a25: '18–25',
+        AGE_26a40: '26–40',
+        AGE_41a59: '41–59',
+        AGE_60a74: '60–74',
+        AGE_75a89: '75–89',
+        AGE_90Plus: '90+',
+    };
+    return map[ageRange] ?? ageRange;
+}
 
 export default function ChartPage() {
-    const base = data.sinamdi_dashboard;
+    const [dashboard, setDashboard] =
+        React.useState<DashboardOverviewResponse | null>(null);
+    const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState<string | null>(null);
 
-    // Série temporal mensal (casos e idd)
-    const series = (base.series_temporais?.evolucao_mensal || []).map(s => ({
-        mes: s.mes,
-        casos: s.casos,
-        idd: s.idd,
+    React.useEffect(() => {
+        let isMounted = true;
+
+        const load = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                const res = await client.get<DashboardOverviewResponse>(
+                    '/dashboard/overview'
+                );
+                if (!isMounted) return;
+                setDashboard(res.data);
+            } catch (err: any) {
+                console.error('Erro ao carregar gráficos do dashboard:', err);
+                if (!isMounted) return;
+                setError('Falha ao carregar gráficos do dashboard');
+            } finally {
+                if (isMounted) setLoading(false);
+            }
+        };
+
+        load();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="w-full h-full px-6 py-4">
+                <p className="text-sm text-muted-foreground">
+                    Carregando gráficos...
+                </p>
+            </div>
+        );
+    }
+
+    if (error || !dashboard) {
+        return (
+            <div className="w-full h-full px-6 py-4">
+                <p className="text-sm text-destructive">
+                    {error ??
+                        'Não foi possível carregar os dados do dashboard.'}
+                </p>
+            </div>
+        );
+    }
+
+    const { charts } = dashboard;
+
+    // ========= 1) Série temporal mensal =========
+    // usamos monthlyTotals para "casos" e a varPercent como segunda série (tipo “variação %”)
+    const series = (charts.monthlyTotals || []).map(m => ({
+        mes: formatMonthLabel(m.year, m.month),
+        casos: m.total,
+        idd: m.varPercent ?? 0, // reaproveitamos a key "idd" pro gráfico, mas representando variação %
     }));
 
-    // Distribuição por faixa etária
-    const faixa = (base.distribuicao_faixa_etaria || []).map(f => ({
-        faixa: f.faixa,
+    // ========= 2) Distribuição por faixa etária =========
+    // usamos highRiskByAgeRange para ter total e % de risco médio/alto
+    const faixa = (charts.highRiskByAgeRange || []).map(f => ({
+        faixa: formatAgeRangeLabel(f.ageRange),
         total: f.total,
-        risco: f.risco_medio,
+        risco: f.percent, // se quiser um segundo gráfico depois
     }));
 
-    // Distribuição regional
-    const regional = (base.distribuicao_regional || []).map(r => ({
-        regiao: r.regiao,
-        casos: r.casos_ativos,
-        ira: r.ira,
+    // ========= 3) Distribuição regional (por estado, por enquanto) =========
+    const regional = (charts.byState || []).map(r => ({
+        regiao: r.state, // UF por enquanto
+        casos: r.count,
+        ira: r.percent, // índice relativo, se quiser em outro gráfico
     }));
 
     const seriesConfig = {
         casos: { label: 'Casos', color: 'hsl(var(--chart-1))' },
-        idd: { label: 'IDD', color: 'hsl(var(--chart-2))' },
+        // aqui "idd" é na verdade a variação %, mas mantemos a key pra bater com CSS vars
+        idd: { label: 'Variação %', color: 'hsl(var(--chart-2))' },
     };
 
     const faixaConfig = {
         total: { label: 'Total', color: 'hsl(var(--chart-3))' },
     };
+
     const regionalConfig = {
         casos: { label: 'Casos ativos', color: 'hsl(var(--chart-4))' },
     };
@@ -68,7 +217,9 @@ export default function ChartPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Evolução mensal de casos</CardTitle>
-                        <CardDescription>Casos e IDD por mês</CardDescription>
+                        <CardDescription>
+                            Total de coletas e variação percentual mês a mês
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <ChartContainer
@@ -141,7 +292,7 @@ export default function ChartPage() {
                     <CardHeader>
                         <CardTitle>Distribuição por faixa etária</CardTitle>
                         <CardDescription>
-                            Quantidade e risco médio por faixa
+                            Total de coletas e concentração de risco por faixa
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -172,10 +323,10 @@ export default function ChartPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle>
-                            Distribuição regional — casos ativos
+                            Distribuição por estado — casos ativos/coletas
                         </CardTitle>
                         <CardDescription>
-                            Casos ativos por região
+                            Quantidade de coletas por UF no período atual
                         </CardDescription>
                     </CardHeader>
                     <CardContent>

@@ -1,135 +1,294 @@
-import data from './data.json';
 import CardDashboard from '@/components/card-dashboard';
 import { Separator } from '@/components/ui/separator';
+import { client } from '@/services/axios.config';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-export default async function DashboardPage() {
+type DashboardOverviewResponse = {
+    period: {
+        current: { startDate: string; endDate: string };
+        previous: { startDate: string; endDate: string };
+    };
+    cards: {
+        totalCollects: {
+            current: number;
+            previous: number;
+            variationPercent: number | null;
+        };
+        highRiskShare: {
+            currentPercent: number;
+            previousPercent: number;
+            variationPoints: number | null;
+        };
+        avgRiskScore: {
+            current: number;
+            previous: number;
+            variationAbs: number | null;
+            variationPercent: number | null;
+        };
+    };
+    charts: {
+        byAgeRange: Array<{
+            ageRange: string;
+            count: number;
+            proportion: number;
+            percent: number;
+        }>;
+        byState: Array<{
+            state: string;
+            count: number;
+            proportion: number;
+            percent: number;
+        }>;
+        byRiskLevel: Array<{
+            riskLevel: string;
+            count: number;
+            proportion: number;
+            percent: number;
+        }>;
+        timeSeriesDaily: Array<{
+            date: string;
+            count: number;
+            mm7: number | null;
+        }>;
+        monthlyTotals: Array<{
+            year: number;
+            month: number;
+            total: number;
+            previousTotal: number | null;
+            varPercent: number | null;
+        }>;
+        ratePer100kByState: Array<{
+            state: string;
+            count: number;
+            population: number | null;
+            ratePer100k: number | null;
+        }>;
+        avgRiskScoreByState: Array<{
+            state: string;
+            avgRiskScore: number;
+        }>;
+        highRiskByAgeRange: Array<{
+            ageRange: string;
+            total: number;
+            highRisk: number;
+            proportion: number;
+            percent: number;
+        }>;
+    };
+};
 
+export default async function DashboardPage() {
     const cookiesStore = await cookies();
 
-    if (!cookiesStore.get('authToken')) {
+    const authCookie = cookiesStore.get('authToken');
+
+    if (!authCookie) {
         redirect('/auth/login');
     }
 
-    const base = data.sinamdi_dashboard;
+    const cookieHeader = cookiesStore
+        .getAll()
+        .map(c => `${c.name}=${c.value}`)
+        .join('; ');
+
+    let dashboard: DashboardOverviewResponse;
+
+    try {
+        const res = await client.get<DashboardOverviewResponse>(
+            '/dashboard/overview',
+            {
+                headers: {
+                    // importantíssimo no SSR: repassar os cookies pro back
+                    Cookie: cookieHeader,
+                },
+            }
+        );
+
+        dashboard = res.data;
+    } catch (error: any) {
+        // se mesmo com cookie der 401, manda pro login
+        if (error.response?.status === 401) {
+            redirect('/auth/login');
+        }
+
+        console.error('Erro ao carregar dashboard:', error);
+        throw new Error('Falha ao carregar dados do dashboard');
+    }
+
+    const { cards, charts } = dashboard;
+
+    // ====== INDICADORES CENTRAIS (cards de cima) ======
 
     const centralIndicators = [
         {
-            description: 'Total de casos cadastrados',
-            title: String(base.indicadores_gerais.total_casos),
-            trending: '5',
-            details: 'Quantidade total de casos registrados',
+            description: 'Total de coletas no período',
+            title: String(cards.totalCollects.current ?? 0),
+            trending:
+                cards.totalCollects.variationPercent !== null &&
+                cards.totalCollects.variationPercent !== undefined
+                    ? `${cards.totalCollects.variationPercent.toFixed(1)}%`
+                    : '—',
+            details: 'Comparado ao período anterior',
         },
         {
-            description: 'Casos ativos',
-            title: String(base.indicadores_gerais.casos_ativos),
-            trending: '2%',
-            details: 'Casos com acompanhamento em andamento',
+            description: 'Participação de risco médio/alto',
+            title: `${cards.highRiskShare.currentPercent.toFixed(1)}%`,
+            trending:
+                cards.highRiskShare.variationPoints !== null &&
+                cards.highRiskShare.variationPoints !== undefined
+                    ? `${cards.highRiskShare.variationPoints.toFixed(1)} pts`
+                    : '—',
+            details:
+                'Proporção de casos com risco MEDIUM + HIGH entre todas as coletas',
         },
         {
-            description: 'Casos encerrados',
-            title: String(base.indicadores_gerais.casos_encerrados),
-            trending: '-3,5%',
-            details: 'Casos finalizados',
-        },
-        {
-            description: 'Instituições cadastradas',
-            title: String(base.indicadores_gerais.instituicoes_cadastradas),
-            trending: '-3,6',
-            details: 'Total de instituições registradas no sistema',
-        },
-        {
-            description: 'Autoavaliações realizadas',
-            title: String(base.indicadores_gerais.autoavaliacoes_realizadas),
-            trending: '-10',
-            details: 'Total de autoavaliações aplicadas',
+            description: 'Score médio de risco',
+            title: cards.avgRiskScore.current.toFixed(2),
+            trending:
+                cards.avgRiskScore.variationAbs !== null &&
+                cards.avgRiskScore.variationAbs !== undefined
+                    ? `${cards.avgRiskScore.variationAbs.toFixed(2)}`
+                    : '—',
+            details: 'LOW = 1, MEDIUM = 2, HIGH = 3',
         },
     ];
 
-    // Métricas derivadas
-    const idd = base.taxas.indice_dependencia_digital;
-    const taxaRecuperacao =
-        (base.indicadores_gerais.casos_encerrados /
-            base.indicadores_gerais.total_casos) *
-        100;
-    const taxaCrescimentoMes = base.taxas.taxa_crescimento_mensal;
-    const tempoMedioAcomp = base.taxas.tempo_medio_acompanhamento_dias;
+    // ====== MÉTRICAS DERIVADAS (baseadas no JSONSÃO) ======
 
-    // Nível médio de risco ponderado por faixa_etaria
-    const distrib = base.distribuicao_faixa_etaria || [];
-    const somaPesos = distrib.reduce((s, f) => s + (f.total || 0), 0) || 1;
-    const nivelMedioRisco =
-        distrib.reduce((s, f) => s + (f.risco_medio || 0) * (f.total || 0), 0) /
-        somaPesos;
+    // IDD = % de casos de risco médio/alto no período
+    const idd = cards.highRiskShare.currentPercent;
+
+    // taxa de crescimento mensal = varPercent do último mês em monthlyTotals
+    const monthlyTotals = charts.monthlyTotals ?? [];
+    const lastMonth =
+        monthlyTotals.length > 0
+            ? monthlyTotals[monthlyTotals.length - 1]
+            : null;
+
+    const taxaCrescimentoMes =
+        lastMonth && lastMonth.varPercent !== null
+            ? lastMonth.varPercent
+            : null;
+
+    // faixa etária mais vulnerável (maior % de risco médio/alto)
+    const topAge =
+        charts.highRiskByAgeRange && charts.highRiskByAgeRange.length > 0
+            ? charts.highRiskByAgeRange[0] // já vem ordenado desc lá no service
+            : null;
+
+    // estado com maior taxa por 100k (se tiver população) ou maior contagem
+    let topState = null as {
+        state: string;
+        label: string;
+    } | null;
+
+    if (charts.ratePer100kByState && charts.ratePer100kByState.length > 0) {
+        const withRate = charts.ratePer100kByState.filter(
+            s => s.ratePer100k !== null
+        );
+        const best =
+            withRate.length > 0 ? withRate[0] : charts.ratePer100kByState[0];
+
+        topState = {
+            state: best.state,
+            label:
+                best.ratePer100k !== null
+                    ? `${best.state} — ${(best.ratePer100k ?? 0).toFixed(
+                          1
+                      )} casos / 100k`
+                    : `${best.state} — ${best.count} coletas`,
+        };
+    }
+
+    // dia com mais coletas no período
+    let topDay = null as { date: string; count: number } | null;
+    if (charts.timeSeriesDaily && charts.timeSeriesDaily.length > 0) {
+        topDay = charts.timeSeriesDaily.reduce((max, cur) =>
+            cur.count > max.count ? cur : max
+        );
+    }
 
     const derivedMetrics = [
         {
             description: 'Índice de Dependência Digital (IDD)',
-            title: `${idd}%`,
-            trending: `${taxaCrescimentoMes}%`,
-            details: 'Percentual de avaliações com alto risco',
-        },
-        {
-            description: 'Taxa de recuperação',
-            title: `${taxaRecuperacao.toFixed(2)}%`,
-            trending: '2',
-            details: 'Casos encerrados / total de casos',
+            title: `${idd.toFixed(1)}%`,
+            trending:
+                taxaCrescimentoMes !== null
+                    ? `${taxaCrescimentoMes.toFixed(1)}%`
+                    : '—',
+            details:
+                'Percentual de coletas classificadas como risco MEDIUM ou HIGH',
         },
         {
             description: 'Taxa de crescimento mensal',
-            title: `${taxaCrescimentoMes}%`,
-            trending: '3',
-            details: 'Variação percentual mês a mês',
+            title:
+                taxaCrescimentoMes !== null
+                    ? `${taxaCrescimentoMes.toFixed(1)}%`
+                    : '—',
+            trending: '—',
+            details:
+                'Variação do total de coletas em relação ao mês anterior (todas as coletas históricas)',
         },
         {
-            description: 'Tempo médio de acompanhamento',
-            title: `${tempoMedioAcomp} dias`,
-            trending: '8',
-            details: 'Média do tempo de acompanhamento por caso',
+            description: 'Faixa etária mais vulnerável',
+            title: topAge
+                ? `${topAge.ageRange} — ${topAge.percent.toFixed(
+                      1
+                  )}% risco médio/alto`
+                : '—',
+            trending: '—',
+            details:
+                'Faixa com maior proporção de casos em risco MEDIUM/HIGH no período atual',
         },
         {
-            description: 'Nível médio de risco (faixas)',
-            title: `${nivelMedioRisco.toFixed(1)}`,
-            trending: '-4',
-            details: 'Média ponderada do risco por faixa etária',
+            description: 'Estado com maior taxa normalizada',
+            title: topState ? topState.label : '—',
+            trending: '—',
+            details:
+                'Estado com maior taxa por 100 mil habitantes (ou maior contagem, se a população não estiver configurada)',
+        },
+        {
+            description: 'Dia com maior volume de coletas',
+            title: topDay ? `${topDay.date} — ${topDay.count} coletas` : '—',
+            trending: '—',
+            details:
+                'Dia de maior concentração de coletas no período atual (útil pra identificar picos de uso)',
         },
     ];
-
-    // Insight IA principal (maior risco previsto no próximo mês)
-    const analises = base.analise_ia_predicao || [];
-    const topInsight =
-        analises.length > 0
-            ? analises.reduce(
-                  (best, cur) =>
-                      cur.risco_previsto_proximo_mes >
-                      (best.risco_previsto_proximo_mes || 0)
-                          ? cur
-                          : best,
-                  analises[0]
-              )
-            : null;
 
     return (
         <div className="w-full h-full px-6 py-4">
             <h2 className="text-3xl text-gray-400 font-semibold mb-4">
                 Dados Gerais
             </h2>
+
             <h3 className="text-xl text-gray-600 font-semibold mb-4">
                 Indicadores Centrais
             </h3>
+
             <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                {/* IDD + TRD (adaptado para a nova API) */}
                 <CardDashboard
                     description="Índice de dependência digital (IDD)"
-                    title={`${idd}%`}
-                    trending={`${taxaCrescimentoMes}%`}
-                    details="Índice que mede a dependência de tecnologias digitais"
+                    title={`${idd.toFixed(1)}%`}
+                    trending={
+                        taxaCrescimentoMes !== null
+                            ? `${taxaCrescimentoMes.toFixed(1)}%`
+                            : '—'
+                    }
+                    details="Proporção de coletas com risco MEDIUM ou HIGH no período"
                 />
                 <CardDashboard
-                    description="Taxa de Recuperação Digital (TRD)"
-                    title={`${taxaRecuperacao.toFixed(2)}%`}
-                    trending={`—`}
-                    details="Taxa que indica a recuperação de dependentes digitais"
+                    description="Score médio de risco"
+                    title={cards.avgRiskScore.current.toFixed(2)}
+                    trending={
+                        cards.avgRiskScore.variationAbs !== null &&
+                        cards.avgRiskScore.variationAbs !== undefined
+                            ? `${cards.avgRiskScore.variationAbs.toFixed(2)}`
+                            : '—'
+                    }
+                    details="LOW = 1, MEDIUM = 2, HIGH = 3 (média global do período)"
                 />
                 {centralIndicators.map(c => (
                     <CardDashboard
@@ -141,10 +300,13 @@ export default async function DashboardPage() {
                     />
                 ))}
             </section>
+
             <Separator className="my-4" />
+
             <h3 className="text-xl text-gray-600 font-semibold mb-4">
                 Indicadores Derivados
             </h3>
+
             <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                 {derivedMetrics.map(m => (
                     <CardDashboard
@@ -156,27 +318,6 @@ export default async function DashboardPage() {
                     />
                 ))}
             </section>
-
-            {topInsight && (
-                <>
-                    <Separator className="my-4" />
-                    <h3 className="text-xl text-gray-600 font-semibold mb-4">
-                        Insight IA Principal
-                    </h3>
-                    <section className="mb-4">
-                        <CardDashboard
-                            description={`Insight IA — faixa ${topInsight.faixa_etaria}`}
-                            title={`${(
-                                topInsight.risco_previsto_proximo_mes * 100
-                            ).toFixed(1)}% risco previsto`}
-                            details={`Fatores-chave: ${topInsight.fatores_chave.join(
-                                ', '
-                            )}`}
-                        />
-                    </section>
-                </>
-            )}
-            
         </div>
     );
 }
