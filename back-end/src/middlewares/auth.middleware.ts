@@ -15,7 +15,7 @@ export async function authorization(
             return next(
                 createHttpError(
                     ErrorTypes.UNAUTHORIZED,
-                    'Bearer token missing.'
+                    'No token provided.'
                 )
             );
         }

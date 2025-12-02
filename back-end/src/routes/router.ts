@@ -6,6 +6,7 @@ import swaggerSpec from "../config/swagger";
 import institutionRoutes from './institutionRoutes'
 import patientRoutes from "./patientRoutes";
 import collectRoutes from "./collectRoutes";
+import dashboardRoutes from '../dashboard/dashboard.routes'
 
 const router: Router = Router();
 
@@ -14,6 +15,7 @@ router.use(userRoutes)
 router.use(patientRoutes)
 router.use(institutionRoutes)
 router.use(collectRoutes)
+router.use(dashboardRoutes);
 router.use('/api/doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 export default router;
