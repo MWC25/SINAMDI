@@ -9,7 +9,7 @@
     "scripts": {
         "dev": "tsx watch src/config/server.ts",
         "build": "tsc",
-        "start": "node dist/server.js"
+        "start": "node dist/config/server.js"
     },
     "dependencies": {
         "@prisma/client": "^6.19.0",
