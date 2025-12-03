@@ -7,9 +7,11 @@ import cookieParser from 'cookie-parser';
 
 const api: express.Application = express();
 
+const allowedOrigins = ['http://localhost:3000', 'http://34.170.157.45:3000'];
+
 api.use(
     cors({
-        origin: '*',
+        origin: allowedOrigins,
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
