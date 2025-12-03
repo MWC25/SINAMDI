@@ -20,14 +20,7 @@ const riskScore: Record<string, number> = {
 
 // ===== helpers internos =====
 
-const buildCurrentPeriod = (params: OverviewParams): DateRange => {
-    if (params.startDate && params.endDate) {
-        return {
-            startDate: params.startDate,
-            endDate: params.endDate,
-        };
-    }
-
+const buildCurrentPeriodFallback = (): DateRange => {
     const now = new Date();
     const year = now.getUTCFullYear();
     const month = now.getUTCMonth(); // 0–11
@@ -89,9 +82,43 @@ const toISODate = (d: Date): string => d.toISOString().slice(0, 10);
 // ===== SERVICE REAL =====
 
 const getOverview = async (params: OverviewParams) => {
-    const currentPeriod = buildCurrentPeriod(params);
-    const previousPeriod = buildPreviousPeriod(currentPeriod);
+    // 1) Sempre pegamos os counts mensais primeiro
+    const monthlyCountsAllRaw = await dashboardRepository.getMonthlyCounts();
 
+    let currentPeriod: DateRange;
+    let previousPeriod: DateRange;
+
+    // 2) Se vier período explícito, respeita
+    if (params.startDate && params.endDate) {
+        currentPeriod = {
+            startDate: params.startDate,
+            endDate: params.endDate,
+        };
+        previousPeriod = buildPreviousPeriod(currentPeriod);
+    } else {
+        // 3) Se NÃO vier período, "pega tudo"
+        if (monthlyCountsAllRaw.length === 0) {
+            // não tem dado nenhum -> fallback: mês atual
+            currentPeriod = buildCurrentPeriodFallback();
+            previousPeriod = buildPreviousPeriod(currentPeriod);
+        } else {
+            // utiliza o primeiro e o último mês com dados
+            const first = monthlyCountsAllRaw[0]!;
+            const last = monthlyCountsAllRaw[monthlyCountsAllRaw.length - 1]!;
+
+            const startDate = new Date(
+                Date.UTC(first.year, first.month - 1, 1, 0, 0, 0, 0)
+            );
+            const endDate = new Date(
+                Date.UTC(last.year, last.month, 0, 23, 59, 59, 999)
+            );
+
+            currentPeriod = { startDate, endDate };
+            previousPeriod = buildPreviousPeriod(currentPeriod);
+        }
+    }
+
+    // 4) Com o período definido, busca o resto dos dados
     const [
         totalCurrent,
         totalPrev,
@@ -102,7 +129,6 @@ const getOverview = async (params: OverviewParams) => {
         riskDistCurrent,
         riskDistPrev,
         dailyCountsCurrent,
-        monthlyCountsAll,
         populations,
         stateRiskCountsCurrent,
         ageHighRiskCurrent,
@@ -116,7 +142,6 @@ const getOverview = async (params: OverviewParams) => {
         dashboardRepository.groupByRiskLevel(currentPeriod),
         dashboardRepository.groupByRiskLevel(previousPeriod),
         dashboardRepository.getDailyCounts(currentPeriod),
-        dashboardRepository.getMonthlyCounts(),
         dashboardRepository.getPopulationByState(),
         dashboardRepository.groupStateRiskCounts(currentPeriod),
         dashboardRepository.groupByAgeRange(currentPeriod, true),
@@ -209,7 +234,7 @@ const getOverview = async (params: OverviewParams) => {
     const timeSeriesDaily = computeMovingAverage7(dailyCountsCurrent);
 
     // ===== Mensal + variação =====
-    const monthlyTotals = computeMonthlyVariation(monthlyCountsAll);
+    const monthlyTotals = computeMonthlyVariation(monthlyCountsAllRaw);
 
     // ===== Taxa por 100k por estado =====
     const populationMap: Record<string, number> = {};

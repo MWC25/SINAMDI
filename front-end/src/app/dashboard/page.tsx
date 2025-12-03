@@ -99,7 +99,6 @@ export default async function DashboardPage() {
             '/dashboard/overview',
             {
                 headers: {
-                    // importantíssimo no SSR: repassar os cookies pro back
                     Cookie: cookieHeader,
                 },
             }
