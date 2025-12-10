@@ -2,12 +2,13 @@ import express from 'express';
 import routes from './routes/router';
 import cors from 'cors';
 import { errorHandler } from './middlewares/errorHandler';
-import { COOKIES_SECRET } from './config/env';
+import { COOKIES_SECRET, URL_FRONT_CORS } from './config/env';
 import cookieParser from 'cookie-parser';
 
 const api: express.Application = express();
 
-const allowedOrigins = ['http://localhost:3000', 'http://34.170.157.45:3000'];
+const allowedOrigins = ['http://localhost:3000', URL_FRONT_CORS];
+console.log('CORS allowed origins:', allowedOrigins);
 
 api.use(
     cors({
