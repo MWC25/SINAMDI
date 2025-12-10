@@ -212,9 +212,9 @@ export default function ChartPage() {
     };
 
     return (
-        <div className="w-full h-full px-6 py-4 space-y-4">
+        <div className="w-full h-full max-w-full overflow-x-hidden px-6 py-4 space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <Card>
+                <Card className="min-w-0">
                     <CardHeader>
                         <CardTitle>Evolução mensal de casos</CardTitle>
                         <CardDescription>
@@ -224,7 +224,7 @@ export default function ChartPage() {
                     <CardContent>
                         <ChartContainer
                             config={seriesConfig}
-                            className="h-[300px]">
+                            className="h-[260px] sm:h-[300px] w-full overflow-hidden">
                             <ResponsiveContainer>
                                 <AreaChart data={series}>
                                     <defs>
@@ -288,7 +288,7 @@ export default function ChartPage() {
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="min-w-0">
                     <CardHeader>
                         <CardTitle>Distribuição por faixa etária</CardTitle>
                         <CardDescription>
@@ -298,7 +298,7 @@ export default function ChartPage() {
                     <CardContent>
                         <ChartContainer
                             config={faixaConfig}
-                            className="h-[300px]">
+                            className="h-[260px] sm:h-[300px] w-full overflow-hidden">
                             <ResponsiveContainer>
                                 <BarChart data={faixa}>
                                     <CartesianGrid
@@ -320,7 +320,7 @@ export default function ChartPage() {
             </div>
 
             <div>
-                <Card>
+                <Card className="min-w-0">
                     <CardHeader>
                         <CardTitle>
                             Distribuição por estado — casos ativos/coletas
@@ -332,7 +332,7 @@ export default function ChartPage() {
                     <CardContent>
                         <ChartContainer
                             config={regionalConfig}
-                            className="h-[300px]">
+                            className="h-[260px] sm:h-[300px] w-full overflow-hidden">
                             <ResponsiveContainer>
                                 <BarChart data={regional} layout="horizontal">
                                     <CartesianGrid

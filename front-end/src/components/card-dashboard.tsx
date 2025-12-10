@@ -21,7 +21,7 @@ export default function CardDashboard({
     details?: string;
 }>) {
     return (
-        <Card className="h-fit w-[428px]">
+        <Card className="h-fit w-full lg:w-[440px]">
             <CardHeader className="relative">
                 <CardDescription>{description}</CardDescription>
                 <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
