@@ -1,4 +1,4 @@
-import { USER_ADMIN_DEFAULT_PASSWORD } from "../config/env";
+import { USERADMINDEFAULTPASSWORD } from "../config/env";
 import { logger } from "../config/logger";
 import { AdminRepository } from "../repositories/admin.repository";
 import { AdminService } from "../services/admin.service";
@@ -8,7 +8,7 @@ export async function createAdminAuto(){
     const admins = await AdminRepository.getAdmins()
     if (admins.length == 0) {
         logger.warn('No admin was found... creating admin...');
-        const data = { username: 'admin', password: USER_ADMIN_DEFAULT_PASSWORD };
+        const data = { username: 'admin', password: USERADMINDEFAULTPASSWORD };
         try {
             const newAdmin = await AdminService.createAdminUser(data);
             logger.info(
