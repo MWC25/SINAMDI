@@ -1,0 +1,1 @@
+{"version":3,"file":"admin.repository.d.ts","sourceRoot":"","sources":["../../src/repositories/admin.repository.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,IAAI,EAAE,MAAM,4BAA4B,CAAC;AAElD,eAAO,MAAM,eAAe;sBACD,GAAG,GAAG,OAAO,CAAC,IAAI,CAAC;iBAIvB,OAAO,CAAC,IAAI,EAAE,CAAC;CAOrC,CAAA"}

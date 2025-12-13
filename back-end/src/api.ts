@@ -12,8 +12,8 @@ console.log('CORS allowed origins:', allowedOrigins);
 
 api.use(
     cors({
-        origin: allowedOrigins,
-        credentials: true,
+        origin: "*",
+        credentials: false,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
     })
