@@ -1,25 +1,41 @@
 {
-    "compilerOptions": {
-        "rootDir": "./src",
-        "outDir": "./dist",
+  "compilerOptions": {
+    /* 🏗️ Base Setup */
+    "rootDir": "./src",
+    "outDir": "./dist",
 
-        "module": "Node16",
-        "target": "es2020",
-        "moduleResolution": "node16",
-        "types": ["node"],
-        
+    /* 🚀 Modern Node Config */
+    // Node 22 suporta quase tudo do ES2023 nativamente.
+    // Isso deixa o código mais limpo e performático (menos polyfills).
+    "target": "ES2023",
 
-        "sourceMap": true,
-        "declaration": true,
-        "declarationMap": true,
+    // "NodeNext" é o jeito certo de lidar com módulos hoje.
+    // Ele permite usar ESM (import/export) ou CJS (require) do jeito certo.
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
 
-        "noUncheckedIndexedAccess": true,
-        "exactOptionalPropertyTypes": true,
-        "noImplicitReturns": true,
-        "noUnusedLocals": true,
-        "strict": true,
-        "skipLibCheck": true
-    },
-    "include": ["src", "types/**/*.d.ts"],
-    "exclude": ["node_modules", "dist", "prisma.config.ts", "prisma"]
+    // Essencial para interoperabilidade, mas com NodeNext, o TS fica mais esperto.
+    "esModuleInterop": true,
+
+    // Garante que os tipos do Node sejam carregados corretamente.
+    "types": ["node"],
+
+    /* 🗺️ Debugging & Build */
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true, // Ajuda muito no debug apontando pro .ts original
+
+    /* 🛡️ Strictness (Gostei de ver, tá bem seguro!) */
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "strict": true,
+    "skipLibCheck": true, // Ignora erros nas d.ts de libs (salva vidas)
+
+    /* Força consistência nos nomes de arquivo (Linux agradece) */
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src", "types/**/*.d.ts"],
+  "exclude": ["node_modules", "dist", "prisma.config.ts", "prisma"]
 }

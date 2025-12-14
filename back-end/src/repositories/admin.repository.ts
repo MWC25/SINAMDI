@@ -1,5 +1,5 @@
 import { prisma } from "../config/prisma";
-import { User } from "../generated/prisma/client";
+import { User } from "@prisma/client";
 
 export const AdminRepository = {
     async createAdmin(data:any): Promise<User> {

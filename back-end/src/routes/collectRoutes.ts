@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { authorization } from "../middlewares/auth.middleware";
 import { authorizeRoles } from "../middlewares/authorizeRoles.midleware";
-import { Role } from "../generated/prisma/enums";
+import { Role } from "@prisma/client";
 import { collectController } from "../controllers/collect.controller";
 
 const router: Router = Router();

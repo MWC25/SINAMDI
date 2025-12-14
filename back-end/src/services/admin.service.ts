@@ -1,5 +1,5 @@
 import { userDTO } from '../DTOs/user.dto';
-import { Role, User } from '../generated/prisma/client';
+import { Role, User } from '@prisma/client';
 import { AdminRepository } from '../repositories/admin.repository';
 import { hashPassword } from '../util/cryptPassword';
 import { createHttpError, ErrorTypes } from '../util/error/error';

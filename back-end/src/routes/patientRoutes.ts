@@ -2,7 +2,7 @@ import { NextFunction, Request, Response, Router } from 'express';
 import { patientController } from '../controllers/patient.controller';
 import { authorization } from '../middlewares/auth.middleware';
 import { authorizeRoles } from '../middlewares/authorizeRoles.midleware';
-import { Role } from '../generated/prisma/enums';
+import { Role } from '@prisma/client';
 
 const router: Router = Router();
 

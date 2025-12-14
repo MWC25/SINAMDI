@@ -6,8 +6,7 @@
 
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -25,7 +24,7 @@ model User {
     updatedAt DateTime @updatedAt
     isActive Boolean @default(true)
     lastLogin DateTime?
-    
+
     institutionId String?
     institution Institution? @relation(fields: [institutionId], references: [id])
 }
@@ -69,7 +68,7 @@ model AddressInstitution {
     city String
     state State
     zipCode String @db.VarChar(8) //ex: 53690000
-    
+
     institutionId String? @unique
     institution Institution? @relation(fields: [institutionId], references:[id])
 }
@@ -83,7 +82,7 @@ model AddressPatient {
     city String
     state State
     zipCode String @db.VarChar(8) //ex: 53690000
-    
+
     patientId String? @unique
     patient Patient? @relation(fields: [patientId], references:[id])
 }
@@ -102,7 +101,7 @@ model Patient {
     sleepQuality Int
     isInsomnia Boolean @default(false)
 
-    gender        Gender?       
+    gender        Gender?
     schooling     Schooling?
 
     address AddressPatient?

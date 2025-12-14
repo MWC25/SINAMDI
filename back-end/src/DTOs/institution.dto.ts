@@ -1,4 +1,4 @@
-import { InstitutionType, State } from "../generated/prisma/enums";
+import { InstitutionType, State } from "@prisma/client";
 import { createHttpError, ErrorTypes } from "../util/error/error";
 
 export interface InstitutionDTOType {

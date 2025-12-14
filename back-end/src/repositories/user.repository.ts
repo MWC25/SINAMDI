@@ -1,5 +1,5 @@
 import { prisma } from '../config/prisma';
-import { Prisma, Institution } from '../generated/prisma/client';
+import { Prisma, Institution } from '@prisma/client';
 
 export const userRepository = {
     async getUserByUserName(username: string) {

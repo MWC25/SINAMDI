@@ -1,5 +1,5 @@
 import { UserDTOType } from '../DTOs/user.dto';
-import { Role, User } from '../generated/prisma/client';
+import { Role, User } from '@prisma/client';
 import { institutionRepository } from '../repositories/institution.repository';
 import { userRepository } from '../repositories/user.repository';
 import { hashPassword } from '../util/cryptPassword';
@@ -103,9 +103,9 @@ export const userService = {
         if (userData.isActive) {
             updateData.isActive = userData.isActive;
         }
-        
+
         const dateTimeNow = new Date();
-        
+
         updateData.updatedAt = dateTimeNow;
 
         return await userRepository.updateUser(userId, updateData);

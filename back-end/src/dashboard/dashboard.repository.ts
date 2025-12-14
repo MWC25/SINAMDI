@@ -1,5 +1,5 @@
 import { prisma } from "../config/prisma";
-import { CollectRisk, Prisma } from "../generated/prisma/client";
+import { CollectRisk, Prisma } from "@prisma/client";
 export type DateRange = {
   startDate: Date;
   endDate: Date;

@@ -5,7 +5,7 @@ import { collectRepository } from "../repositories/collect.repository";
 import { patientRepository } from "../repositories/patients.repository";
 import { createHttpError, ErrorTypes } from "../util/error/error";
 import { patientHash } from "../util/patientHash";
-import { AgeRange, CollectChannel, CollectRisk, State } from "../generated/prisma/enums";
+import { AgeRange, CollectChannel, CollectRisk, State } from "@prisma/client";
 
 
 export const collectService = {
@@ -58,7 +58,7 @@ export const collectService = {
         if (!params) {
             throw createHttpError(ErrorTypes.BAD_REQUEST, 'Query parameters are required.');
         }
-        
+
         const {
             institutionId,
             channel,
@@ -135,7 +135,7 @@ export const collectService = {
 
         return collectRepository.update(id, data);
     },
-    
+
     async deleteCollect(id: string) {
         const existingCollect = await collectRepository.findById(id);
 

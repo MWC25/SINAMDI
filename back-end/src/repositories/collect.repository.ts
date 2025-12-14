@@ -1,12 +1,12 @@
 import { prisma } from '../config/prisma';
-import { Prisma } from '../generated/prisma/client';
+import { Prisma } from '@prisma/client';
 import { CollectDTOType, CollectUpdateDTOType } from '../DTOs/collect.dto';
 import {
     AgeRange,
     CollectChannel,
     CollectRisk,
     State,
-} from '../generated/prisma/enums';
+} from '@prisma/client';
 
 // Filtros que vão vir via query string (GET /collects?state=PE&riskLevel=ALTO...)
 export interface CollectQueryParams {

@@ -1,4 +1,4 @@
-import { Role } from '../generated/prisma/enums';
+import { Role } from '@prisma/client';
 import { createHttpError, ErrorTypes } from '../util/error/error';
 
 export type UserDTOType = {

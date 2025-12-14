@@ -5,9 +5,9 @@ import {
     Gender,
     Schooling,
     State,
-} from '../generated/prisma/enums';
+} from '@prisma/client';
 
-import type { Prisma } from '../generated/prisma/client';
+import type { Prisma } from '@prisma/client';
 
 // ===========================
 // 1) DTOs de ENTRADA (request)

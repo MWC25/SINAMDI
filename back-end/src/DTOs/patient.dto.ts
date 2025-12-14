@@ -3,7 +3,7 @@ import {
     PatientStatus,
     Schooling,
     State,
-} from '../generated/prisma/enums';
+} from '@prisma/client';
 import { createHttpError, ErrorTypes } from '../util/error/error';
 
 export type PatientDTOType = {

@@ -1,0 +1,1 @@
+{"version":3,"file":"role.repository.js","sourceRoot":"","sources":["../../src/repositories/role.repository.ts"],"names":[],"mappings":";;;AAAA,6CAAyC;AAE5B,QAAA,cAAc,GAAG;IAC1B,KAAK,CAAC,eAAe,CAAC,MAAc;QAChC,OAAO,MAAM,eAAM,CAAC,IAAI,CAAC,SAAS,CAAC;YAC/B,MAAM,EAAC;gBACH,IAAI,EAAE,IAAI;aACb;YACD,KAAK,EAAE;gBACH,EAAE,EAAE,MAAM;aACb;SACJ,CAAC,CAAC;IACP,CAAC;CACJ,CAAA"}
