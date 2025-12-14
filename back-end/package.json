@@ -4,7 +4,7 @@
   "description": "API para o sistema nacional SINAMDI",
   "license": "ISC",
   "author": "",
-  
+
 
   "engines": {
     "node": ">=22.21.1"
@@ -29,7 +29,9 @@
     "express": "^5.0.1",
     "jsonwebtoken": "^9.0.2",
     "winston": "^3.11.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "winston-daily-rotate-file": "^5.0.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
 
   "devDependencies": {
