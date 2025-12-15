@@ -84,6 +84,7 @@ export default async function DashboardPage() {
     const authCookie = cookiesStore.get('authToken');
 
     if (!authCookie) {
+        console.log("erro na dashboard/page.tsx: authToken cookie not found")
         redirect('/auth/login');
     }
 
@@ -108,6 +109,7 @@ export default async function DashboardPage() {
     } catch (error: any) {
         // se mesmo com cookie der 401, manda pro login
         if (error.response?.status === 401) {
+            console.log("erro na dashboard/page.tsx 2: 401 Unauthorized - redirecting to login")
             redirect('/auth/login');
         }
 
